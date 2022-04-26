@@ -13,9 +13,10 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1200">
+        WindowStartupLocation="CenterScreen"
+        Title="Toddy" Height="900" Width="1200" MinWidth="800" MinHeight="500">
     <Grid Name="MainGrid" ShowGridLines="False">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="35pt"></RowDefinition>
             <RowDefinition ></RowDefinition>
@@ -27,19 +28,212 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
+
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="4"/>
 
         <StackPanel Margin="10,10,10,10" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2">
-            <materialDesign:Card Padding="32" Margin="16" Grid.Column="0" Grid.Row="0">
+            <materialDesign:Card Padding="32" Margin="16" Grid.Column="0" Grid.Row="0" UniformCornerRadius="10">
                 <Button Name="button1"  xml:space="preserve" Click="Button_Click" Content="Button" HorizontalAlignment="Center" />
             </materialDesign:Card>
         </StackPanel>
+        <WrapPanel Margin="40,0,40,0" Grid.Column="2" Grid.Row="1" Orientation="Horizontal" ItemWidth="Auto" ItemHeight="70">
+            <CheckBox Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" IsChecked="False" Content="Show only in progress" />
+        </WrapPanel>
+        <ScrollViewer Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" VerticalScrollBarVisibility="Visible" >
+            <StackPanel Margin="0,10,0,10" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2">
 
-        <StackPanel Margin="40,80,40,20" Grid.Column="2" Grid.Row="1">
-            <materialDesign:Card Padding="32" Margin="16,25,16,72" Grid.Column="2">
-            <TextBox x:Name ="textbox1" TextWrapping="Wrap" Text="TextBox" Width="120"/>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="button44445" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+                        
+                    </DockPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="button445" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="button4445" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="butto5" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="button125" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="but1245" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="but12124445" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="wtewttew" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="wrwerrw" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="werwer" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="rwer4r3" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="0,4pt,0,0" UniformCornerRadius="10" Height="40pt">
+                    <DockPanel LastChildFill="True">
+
+                        <Button Name="rwer" DockPanel.Dock="Left" Click="Button_Click"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
+                            <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
+                        </Button>
+                        <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
+
+                        <Label Content="This is a test to do item wit textThis is a test to do item wit textThis is a test to do item wit text" VerticalContentAlignment="Center"/>
+
+                    </DockPanel>
+                </materialDesign:Card>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <materialDesign:Card Grid.Column="2" Grid.Row="2" Margin="40,0,40,0" UniformCornerRadius="10">
+            <DockPanel LastChildFill="True">
+                <materialDesign:PackIcon DockPanel.Dock="Left" Kind="PlusCircle" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Margin="10pt,0,0,0"/>
+                <Button Name="button5"  DockPanel.Dock="Right" Grid.Column="2" Click="Button_Click" Content="Add" HorizontalContentAlignment="Center" FlowDirection="LeftToRight" Margin="0,0,10pt,0"  Width="60pt"/>
+                <TextBox Name ="textbox4" 
+                            materialDesign:HintAssist.Hint="What you want to do? " 
+                            Grid.Column="1" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10pt,0,10pt,0"/>
+            </DockPanel>
         </materialDesign:Card>
-        </StackPanel>
+        <DockPanel Grid.ColumnSpan="2" Grid.Column="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Cut">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ContentCut">
+
+                            </materialDesign:PackIcon>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Cut">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ContentCut">
+
+                            </materialDesign:PackIcon>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
     </Grid>
+
 </Window>
