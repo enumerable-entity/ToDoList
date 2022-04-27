@@ -1,6 +1,6 @@
 # ToDo List
 
-## C# WPF .Net Framework desktop application for personal todo's managment
+## C# WPF .Net desktop application for personal todo's managment
 ___
 ### Author: Artur Babii
 ### Przedmiot: Szkolenie techniczne 1
