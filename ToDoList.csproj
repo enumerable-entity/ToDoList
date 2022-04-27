@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>to-do-list.ico</ApplicationIcon>
+	<Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,14 +14,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
     <PackageReference Include="MaterialDesignThemes" Version="4.4.0" />
-    <PackageReference Include="SQLite" Version="3.13.0" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ViewsModels\" />
     <Folder Include="Views\" />
   </ItemGroup>
-
+  
 </Project>
