@@ -2,7 +2,7 @@
 
 namespace ToDoList.Models
 {
-    public class ListItem
+    public class Task
     {
         public int Id { get; set; }
 
@@ -12,8 +12,8 @@ namespace ToDoList.Models
 
         public bool IsCompleted { get; set; }
 
-        public virtual ItemList ItemList { get; set; }
-        public int ItemListId { get; set; }
+        public virtual TasksList TaskList { get; set; }
+        public int TaskListId { get; set; }
 
     }
 }

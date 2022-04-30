@@ -11,6 +11,7 @@ namespace ToDoList.Models
         public int Id { get; set; }
         public string LoginName { get; set; }
         public string Password { get; set; }
+        public UserSettings Settings { get; set; }
 
         public virtual List<Category> Categories { get; set; } 
 
