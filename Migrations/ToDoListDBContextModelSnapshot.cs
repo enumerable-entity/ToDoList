@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList;
 
@@ -10,11 +9,10 @@ using ToDoList;
 
 namespace ToDoList.Migrations
 {
-    [DbContext(typeof(ToDoListContext))]
-    [Migration("20220427112235_Init")]
-    partial class Init
+    [DbContext(typeof(ToDoListDBContext))]
+    partial class ToDoListDBContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -25,7 +23,7 @@ namespace ToDoList.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Title")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
@@ -38,7 +36,32 @@ namespace ToDoList.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.ItemList", b =>
+            modelBuilder.Entity("ToDoList.Models.Task", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CompleteDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TaskListId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskListId");
+
+                    b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("ToDoList.Models.TasksList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,38 +77,12 @@ namespace ToDoList.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("ItemLists");
-                });
-
-            modelBuilder.Entity("ToDoList.Models.ListItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("CompleteDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemListId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemListId");
-
-                    b.ToTable("ListItems");
+                    b.ToTable("TasksLists");
                 });
 
             modelBuilder.Entity("ToDoList.Models.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("LoginName")
@@ -99,6 +96,32 @@ namespace ToDoList.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ToDoList.Models.UserSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("DarkMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GridSplitterPosition")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WindowHeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WindowWidth")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserSettings");
+                });
+
             modelBuilder.Entity("ToDoList.Models.Category", b =>
                 {
                     b.HasOne("ToDoList.Models.User", "User")
@@ -110,10 +133,21 @@ namespace ToDoList.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.ItemList", b =>
+            modelBuilder.Entity("ToDoList.Models.Task", b =>
+                {
+                    b.HasOne("ToDoList.Models.TasksList", "TaskList")
+                        .WithMany("Tasks")
+                        .HasForeignKey("TaskListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaskList");
+                });
+
+            modelBuilder.Entity("ToDoList.Models.TasksList", b =>
                 {
                     b.HasOne("ToDoList.Models.Category", "Category")
-                        .WithMany("Lists")
+                        .WithMany("TaskLists")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -121,30 +155,35 @@ namespace ToDoList.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.ListItem", b =>
+            modelBuilder.Entity("ToDoList.Models.User", b =>
                 {
-                    b.HasOne("ToDoList.Models.ItemList", "ItemList")
-                        .WithMany("Items")
-                        .HasForeignKey("ItemListId")
+                    b.HasOne("ToDoList.Models.UserSettings", "Settings")
+                        .WithOne("User")
+                        .HasForeignKey("ToDoList.Models.User", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ItemList");
+                    b.Navigation("Settings");
                 });
 
             modelBuilder.Entity("ToDoList.Models.Category", b =>
                 {
-                    b.Navigation("Lists");
+                    b.Navigation("TaskLists");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.ItemList", b =>
+            modelBuilder.Entity("ToDoList.Models.TasksList", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("ToDoList.Models.User", b =>
                 {
                     b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("ToDoList.Models.UserSettings", b =>
+                {
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

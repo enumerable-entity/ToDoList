@@ -10,17 +10,39 @@ namespace ToDoList.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserSettings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    WindowHeight = table.Column<int>(type: "INTEGER", nullable: false),
+                    WindowWidth = table.Column<int>(type: "INTEGER", nullable: false),
+                    GridSplitterPosition = table.Column<int>(type: "INTEGER", nullable: false),
+                    DarkMode = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
                     LoginName = table.Column<string>(type: "TEXT", nullable: true),
                     Password = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_UserSettings_Id",
+                        column: x => x.Id,
+                        principalTable: "UserSettings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,7 +51,7 @@ namespace ToDoList.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Title = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -44,7 +66,7 @@ namespace ToDoList.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ItemLists",
+                name: "TasksLists",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -54,9 +76,9 @@ namespace ToDoList.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemLists", x => x.Id);
+                    table.PrimaryKey("PK_TasksLists", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemLists_Categories_CategoryId",
+                        name: "FK_TasksLists_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
@@ -64,7 +86,7 @@ namespace ToDoList.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListItems",
+                name: "Tasks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -72,15 +94,15 @@ namespace ToDoList.Migrations
                     Content = table.Column<string>(type: "TEXT", nullable: true),
                     CompleteDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ItemListId = table.Column<int>(type: "INTEGER", nullable: false)
+                    TaskListId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListItems", x => x.Id);
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListItems_ItemLists_ItemListId",
-                        column: x => x.ItemListId,
-                        principalTable: "ItemLists",
+                        name: "FK_Tasks_TasksLists_TaskListId",
+                        column: x => x.TaskListId,
+                        principalTable: "TasksLists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -91,29 +113,32 @@ namespace ToDoList.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemLists_CategoryId",
-                table: "ItemLists",
-                column: "CategoryId");
+                name: "IX_Tasks_TaskListId",
+                table: "Tasks",
+                column: "TaskListId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListItems_ItemListId",
-                table: "ListItems",
-                column: "ItemListId");
+                name: "IX_TasksLists_CategoryId",
+                table: "TasksLists",
+                column: "CategoryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ListItems");
+                name: "Tasks");
 
             migrationBuilder.DropTable(
-                name: "ItemLists");
+                name: "TasksLists");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "UserSettings");
         }
     }
 }

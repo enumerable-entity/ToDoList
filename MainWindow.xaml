@@ -16,7 +16,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Toddy" Height="900" Width="1200" MinWidth="800" MinHeight="500">
-    <Grid x:Name="MainGrid" ShowGridLines="False">
+    <Grid x:Name="MainGrid" ShowGridLines="True">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35pt"/>
@@ -25,9 +25,9 @@
             <RowDefinition Height="40pt"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="200pt" MaxWidth="360pt"/>
+            <ColumnDefinition Width="*" MinWidth="150pt" MaxWidth="360pt"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="4"/>
