@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using ToDoList.Models;
+using ToDoList.ViewsModels;
 
 namespace ToDoList
 {
@@ -18,6 +18,7 @@ namespace ToDoList
         {
             services.AddDbContext<ToDoListDBContext>();
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<MainViewModel>();
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {

@@ -65,7 +65,11 @@ namespace ToDoList
                 .WithOne(p => p.Settings)
                 .HasForeignKey<User>(pt => pt.Id);
 
+            
+
             //modelBuilder.Entity<Order>().Property(t => t.OrderDate).IsRequired();
         }
+
+        
     }
 }
