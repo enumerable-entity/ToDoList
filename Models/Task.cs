@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ToDoList.Models
 {
-    public class Task
+    public class Task : INotifyPropertyChanged
     {
         public int Id { get; set; }
 
@@ -15,5 +17,11 @@ namespace ToDoList.Models
         public virtual TasksList TaskList { get; set; }
         public int TaskListId { get; set; }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

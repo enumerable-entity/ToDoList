@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,13 +23,42 @@ namespace ToDoList.ViewsModels
         public ICommand AddCategoryCommand { get; set; }
 
 
-        #endregion
-
-        private ObservableCollection<Category> _categories;
-        public ObservableCollection<Category> categories
+        private ObservableCollection<Task> _selectetTaskListItems;
+        public ObservableCollection<Task> SelectedTaskListItems
         {
             get
             {
+                return _selectetTaskListItems;
+            }
+            set
+            {
+
+                if (_selectetTaskListItems != null)
+                {
+                    foreach (var item in _selectetTaskListItems)
+                    {
+                        item.PropertyChanged -= PropertyChanged;
+                    }
+                }
+
+                if (value != null)
+                {
+                    foreach (var item in value)
+                    {
+                        item.PropertyChanged += PropertyChanged;
+                    }
+                }
+                _selectetTaskListItems = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        private ObservableCollection<Category> _categories;
+        public ObservableCollection<Category> Categories
+        {
+            get
+           {
                 return _categories;
             }
             set
@@ -109,8 +139,8 @@ namespace ToDoList.ViewsModels
 
         public MainViewModel(ToDoListDBContext dBcontext)
         {
-            categories = new ObservableCollection<Category>(dBcontext.Categories.ToList());
-
+            Categories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).ToList());
+            SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.ToList());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -122,7 +152,7 @@ namespace ToDoList.ViewsModels
 
         private void AddCategory(object sender, RoutedEventArgs e)
         {
-            categories.Add(new Category()
+            Categories.Add(new Category()
             {
                 Title =
                 NewCategory.Title,

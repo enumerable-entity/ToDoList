@@ -1,12 +1,12 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="ToDoList.MainWindow"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ToDoList.Models"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
-        xmlns:ViewModels="clr-namespace:ToDoList.ViewsModels" d:DataContext="{d:DesignInstance Type=ViewModels:MainViewModel}" x:Class="ToDoList.MainWindow"
+        xmlns:ViewModels="clr-namespace:ToDoList.ViewsModels" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -34,51 +34,6 @@
 
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="4"/>
 
-        <!-- ======================== =============================================================================================-->
-        <!--<Grid MinWidth="220" Grid.Column="0" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TreeView Grid.Row="0" ItemsSource="{Binding MovieCategories}" MinWidth="220" SelectedItemChanged="TreeView_SelectedItemChanged">
-                <TreeView.Resources>
-                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
-                        <Setter Property="materialDesign:TreeViewAssist.ExpanderSize" Value="32" />
-                        <Setter Property="materialDesign:TreeViewAssist.ShowSelection" Value="False" />
-                    </Style>
-                    <HierarchicalDataTemplate  ItemsSource="{Binding Movies}">
-                        <TextBlock Text="{Binding Name}" Margin="3,2" />
-                    </HierarchicalDataTemplate>
-                    <DataTemplate >
-                        <TextBlock Text="{Binding Name}" Margin="3 2" ToolTip="{Binding Director}" />
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-            <materialDesign:PopupBox Grid.Row="1" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" PlacementMode="LeftAndAlignMiddles" UnfurlOrientation="Horizontal"
-                                    ToolTip="Manage items"
-                                    Margin="0 0 10 10"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Bottom">
-                <StackPanel Orientation="Horizontal">
-                    <Button ToolTip="Add an item" Command="{Binding AddCommand}">
-                        <Path
-                                Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
-                                Stretch="Uniform"
-                                Width="15"
-                                Height="15"
-                                Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" />
-                    </Button>
-                    <Button ToolTip="Remove selected item" Command="{Binding RemoveSelectedItemCommand}">
-                        <Path
-                                Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
-                                Stretch="Uniform"
-                                Width="15"
-                                Height="15"
-                                Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" />
-                    </Button>
-                </StackPanel>
-            </materialDesign:PopupBox>
-        </Grid>-->
 
         <WrapPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Margin="40,0,40,0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Width="auto">
             <Label Content="Light mode" Margin="0,0,9,0" FontSize="14">
@@ -97,18 +52,47 @@
 
 
         <TreeView Grid.Column="0" Grid.Row="1"
-                    ItemsSource="{Binding categories}"
+                    ItemsSource="{Binding Categories}"
                     MinWidth="220">
+            <TreeView.Resources>
+                <Style
+        TargetType="TreeViewItem"
+        BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+                    <Setter
+          Property="materialDesign:TreeViewAssist.ExpanderSize"
+          Value="30" />
+                    <Setter
+          Property="materialDesign:TreeViewAssist.ShowSelection"
+          Value="False" />
+                    
+                </Style>
+            </TreeView.Resources>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectedItemChanged">
+                    <i:InvokeCommandAction Command="{Binding TreeviewSelectedItemChanged}" CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding TaskLists}">
                     <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Tasks}">
-                            <TextBlock Text="{Binding Name}"/>
+                        <HierarchicalDataTemplate >
+                            <WrapPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon  Kind="ClipboardListOutline" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15pt" Width="15pt" Margin="30,0,0,0"/>
+
+                                <TextBlock Text="{Binding Name}" Margin="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </WrapPanel>
+                            
                         </HierarchicalDataTemplate>
                     </HierarchicalDataTemplate.ItemTemplate>
-                    <TextBlock Text="{Binding Title}"/>
+                    <WrapPanel  Orientation="Horizontal">
+                        <materialDesign:PackIcon  Kind="FolderText" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15pt" Width="15pt" Margin="0"/>
+
+                        <TextBlock Text="{Binding Title}" Margin="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </WrapPanel>
+                    
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+
         </TreeView>
         <!-- ======================== =============================================================================================-->
 
@@ -124,17 +108,17 @@
             </ComboBox>
         </WrapPanel>
 
-        <ListBox Name="MainList" Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding categories}" Width="auto" Background="Yellow">
+        <ListBox Name="MainList" Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate >
                 <DataTemplate >
-                    <materialDesign:Card Height="40pt" Background="Green" HorizontalAlignment="Stretch" Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}">
-                        <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" Background="Red">
+                    <materialDesign:Card Height="40pt" HorizontalAlignment="Stretch" Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}" >
+                        <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" >
                             <Button x:Name="button44445" DockPanel.Dock="Left"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
                                 <materialDesign:PackIcon Kind="RadioboxBlank" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Foreground="White" />
                             </Button>
-                            <Label Content="12.03.2022" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
+                            <Label Content="{Binding CompleteDate}" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
                             <materialDesign:PackIcon Kind="Calendar" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
-                            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center"  FontSize="12" Text="{Binding Title}"></TextBlock>
+                            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center"  FontSize="12" Text="{Binding Content}"></TextBlock>
                         </DockPanel>
                     </materialDesign:Card>
                 </DataTemplate>
@@ -206,14 +190,14 @@
         </StackPanel>
         <DockPanel Grid.ColumnSpan="2" Grid.Column="0">
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Edit">
+                <MenuItem Header="Menu">
                     <MenuItem Header="Cut">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="ContentCut"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Edit">
+                <MenuItem Header="About">
                     <MenuItem Header="Cut">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="ContentCut"/>
