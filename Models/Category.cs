@@ -7,7 +7,6 @@ namespace ToDoList.Models
     public class Category : INotifyPropertyChanged
     {
         public int Id { get; set; }
-
         private string _title;
         public string Title {
             get { return _title; }
@@ -17,7 +16,6 @@ namespace ToDoList.Models
                 OnPropertyChanged();
             }
         }
-
         public virtual IList<TasksList> TaskLists { get; set; }
 
         public virtual User User { get; set; }

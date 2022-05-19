@@ -2,7 +2,6 @@
 {
     public class UserSettings
     {
-
         public int Id { get; set; }
         public virtual User User { get; set; }
         public int UserId { get; set; }
@@ -13,7 +12,5 @@
         public int WindowWidth { get; set; }
         public int GridSplitterPosition { get; set; }
         public bool DarkMode { get; set; }
-
-
     }
 }

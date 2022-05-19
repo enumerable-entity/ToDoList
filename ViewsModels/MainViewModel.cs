@@ -15,10 +15,10 @@ namespace ToDoList.ViewsModels
         private User admin;
         
 
-        public Category NewCategory { get; set; }
+        public string NewCategoryTitle { get; set; }
         public TasksList NewTaskList { get; set; }
         public Task NewTask { get; set; }
-
+        public bool IsDarkModeEnabled { get; set; }
         #region Categories
         public ICommand AddCategoryCommand { get; set; }
 
@@ -83,7 +83,6 @@ namespace ToDoList.ViewsModels
             }
         }
 
-
         public MainViewModel()
         {
             #region default user
@@ -141,6 +140,8 @@ namespace ToDoList.ViewsModels
         {
             Categories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).ToList());
             SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.ToList());
+            IsDarkModeEnabled = false;
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -152,15 +153,15 @@ namespace ToDoList.ViewsModels
 
         private void AddCategory(object sender, RoutedEventArgs e)
         {
-            Categories.Add(new Category()
+            Category newCategory = new Category()
             {
-                Title =
-                NewCategory.Title,
+                Title = NewCategoryTitle,
                 User = admin
-            });
+            };
 
+            DBcontext.Categories.Add(newCategory);
+            Categories.Add(newCategory);
             OnPropertyChanged();
-            
         }
     }
 }

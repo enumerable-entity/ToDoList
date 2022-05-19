@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using ToDoList.ViewsModels;
 
-namespace ToDoList
+namespace ToDoList.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(ToDoListDBContext dBcontext, MainViewModel mvm)
+        public MainWindow(MainViewModel mvm)
         {
             InitializeComponent();
             this.DataContext = mvm;  //Dependency injection
