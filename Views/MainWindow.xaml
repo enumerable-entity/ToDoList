@@ -25,7 +25,7 @@
         MinWidth="800" 
         MinHeight="500">
 
-    <Grid x:Name="MainGrid" ShowGridLines="True">
+    <Grid x:Name="MainGrid" ShowGridLines="False">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35pt"/>
@@ -41,7 +41,7 @@
             <ColumnDefinition Width="4*" MinWidth="570"/>
         </Grid.ColumnDefinitions>
 
-        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="5"/>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="6"/>
 
 
         <WrapPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Margin="40,0,40,0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Width="auto">
@@ -63,11 +63,33 @@
         </WrapPanel>
 
 
+
+        <materialDesign:Card Grid.Column="0" Grid.Row="1" Margin="10,0,10,0"
+                                     Padding="0,7pt,0,7pt"
+                                     VerticalContentAlignment="Center"
+                                     VerticalAlignment="Center">
+            <materialDesign:Card.InputBindings>
+                <MouseBinding Command="{Binding ShowMyDayTasksCommand}"></MouseBinding>
+            </materialDesign:Card.InputBindings>
+            <DockPanel LastChildFill="True">
+                <materialDesign:PackIcon  DockPanel.Dock="Left" Foreground="{StaticResource PrimaryHueMidBrush}" 
+                                                          Kind="Home" 
+                                                          VerticalAlignment="Center" 
+                                                          HorizontalAlignment="Center" 
+                                                          Height="19pt" 
+                                                          Width="19pt" 
+                                                          Margin="05,0,0,0"/>
+                        
+                    <TextBlock DockPanel.Dock="Right" Text="My daily tasks" FontSize="13pt" Margin="5pt,4,0,0"/>
+                    </DockPanel>
+                </materialDesign:Card>
+
         <TreeView   Grid.Column="0" 
                     Grid.Row="2"
-                    Name="treeView"
+                    Name ="treeView"
                     ItemsSource="{Binding TreeViewCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    MinWidth="220">
+                    MinWidth="220"
+                    Margin="0,10pt,0,0">
             <TreeView.Resources>
                 <Style  TargetType="TreeViewItem"
                         BasedOn="{StaticResource MaterialDesignTreeViewItem}">
@@ -96,7 +118,8 @@
                                                           Width="15pt" 
                                                           Margin="30,0,0,0"/>
 
-                                <TextBlock Text="{Binding Title}" 
+                                <TextBlock Text="{Binding Title}"
+                                           FontSize="13pt"
                                            Margin="5,0,0,0" 
                                            VerticalAlignment="Center" 
                                            HorizontalAlignment="Center"/>
@@ -113,7 +136,8 @@
                                                   Width="15pt" 
                                                   Margin="0"/>
 
-                        <TextBlock Text="{Binding Title}" 
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="13pt"
                                    Margin="5,0,0,0" 
                                    VerticalAlignment="Center" 
                                    HorizontalAlignment="Center"/>
@@ -125,16 +149,17 @@
         </TreeView>
         <!-- ======================== =============================================================================================-->
         
-        <DockPanel Margin="40,0,40,0" Grid.Column="2" Grid.Row="1">
+        <DockPanel Margin="0,0,40,0" Grid.Column="2" Grid.Row="1">
             <CheckBox DockPanel.Dock="Left"
                       Height="31pt"
-                      Margin="5pt,0,5pt,0" Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" IsChecked="False" Content="Show only in progress"/>
+                      Margin="5pt,0,15pt,0" Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" IsChecked="False" Content="Show only in progress"/>
             <ComboBox DockPanel.Dock="Left"
                         Style="{StaticResource MaterialDesignFilledComboBox}"
                         materialDesign:HintAssist.Hint="Sort by"
                         ItemsSource="{Binding ShortStringList}"
                         materialDesign:TextFieldAssist.HasClearButton="True"
-                        Width="140">
+                        Width="140"
+                        Height="42">
                 <ComboBox.SelectedItem>
                     <Binding
                             Path="SelectedValidationFilled"
@@ -159,12 +184,11 @@
                         TextWrapping="Wrap"
                         Width="180"
                         MaxWidth="400"
-                        materialDesign:HintAssist.Hint="Find todo's"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignFilledTextBoxEnabledComboBox}" />
+                        materialDesign:HintAssist.Hint="Find todo's" />
 
         </DockPanel>
 
-        <ListBox Name="MainList" Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
+        <ListBox Name="MainList" Margin="0,60,10,0" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate >
                 <DataTemplate >
                     <materialDesign:Card Height="40pt" HorizontalAlignment="Stretch" Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}" >
@@ -186,8 +210,8 @@
         <materialDesign:Card Grid.Column="2" Grid.Row="5" Margin="10,5,10,5" UniformCornerRadius="0">
             <DockPanel LastChildFill="True">
                 <materialDesign:PackIcon  DockPanel.Dock="Left" Kind="PlusCircle" Foreground="{StaticResource PrimaryHueMidBrush}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Margin="10pt,0,0,0"/>
-                <Button x:Name="add_new_task_button" 
-                        ToolTip="Add new item to list" 
+                <Button ToolTip="Add new item to list" 
+                        Command="{Binding AddNewTaskCommand}"
                         DockPanel.Dock="Right" 
                         Grid.Column="2" 
                         Content="Add" 
@@ -195,10 +219,20 @@
                         FlowDirection="LeftToRight" 
                         Margin="0,0,10pt,0"  
                         Width="60pt"/>
-                <TextBox x:Name ="new_task_text_box" 
+                <TextBox x:Name ="new_task_text_box"
+                         Text="{Binding NewTaskContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="What you want to do? " 
                             SpellCheck.IsEnabled="True"
-                            Grid.Column="1" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10pt,0,10pt,0" MaxLength="129"/>
+                            Grid.Column="1" 
+                         TextWrapping="WrapWithOverflow" 
+                         HorizontalAlignment="Stretch" 
+                         VerticalAlignment="Center" 
+                         Margin="10pt,0,10pt,0" 
+                         MaxLength="129">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding AddNewTaskCommand}" Key="Return" />
+                    </TextBox.InputBindings>
+                </TextBox>
             </DockPanel>
             <!--Add new category region-->
         </materialDesign:Card>
@@ -224,7 +258,7 @@
                                                   Width="15pt"/>
                     </Button.Content>
                 </Button>
-                <TextBox x:Name ="new_categry_tb" 
+                <TextBox  
                          Text="{Binding NewCategoryTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="New category" 
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"

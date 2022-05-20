@@ -23,6 +23,8 @@ namespace ToDoList
                                 => options.UseSqlite($"Data Source={DbPath}");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<Category>()
@@ -64,13 +66,62 @@ namespace ToDoList
             modelBuilder.Entity<UserSettings>()
                 .HasOne(pt => pt.User)
                 .WithOne(p => p.Settings)
-                .HasForeignKey<User>(pt => pt.Id);
+                .HasForeignKey<UserSettings>(pt => pt.UserId);
 
-            
+            modelBuilder.Entity<User>().HasData(new User()
+            {
+                Id = 1,
+                LoginName = "admin",
+                Password = "admin",
+                IsAuthenticated = true
+                
+            });
+
+            modelBuilder.Entity<UserSettings>().HasData(new UserSettings()
+            {
+                Id = 1,
+                WindowHeight = 900,
+                WindowWidth = 1200,
+                DarkMode = true,
+                GridSplitterPosition = 200,
+                UserId = 1
+            });
+
+            modelBuilder.Entity<Category>().HasData(new Category()
+            {
+                Id = 1,
+                Title = "Default category",
+                UserId = 1
+            });
+
+            modelBuilder.Entity<TasksList>().HasData(new TasksList()
+            {
+                Id = 1,
+                Title = "Default task list",
+                CategoryId = 1
+
+            });
+
+            modelBuilder.Entity<TasksList>().HasData(new TasksList()
+            {
+                Id = Int32.MaxValue,
+                Title = "My day",
+
+            });
+
+            modelBuilder.Entity<Task>().HasData(new Task()
+            {
+                Id = 1,
+                Content = "This is a default task",
+                CompleteDate = new System.DateTime(2025, 11, 04, 04, 00, 00),
+                IsCompleted = false,
+                TaskListId = 1
+
+            });
 
             //modelBuilder.Entity<Order>().Property(t => t.OrderDate).IsRequired();
         }
 
-        
+
     }
 }

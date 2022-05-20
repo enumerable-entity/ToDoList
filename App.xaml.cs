@@ -21,7 +21,6 @@ namespace ToDoList
             services.AddDbContext<ToDoListDBContext>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();
-            services.AddSingleton<LambdaCommand>();
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
