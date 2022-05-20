@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GalaSoft.MvvmLight.Command;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using ToDoList.Models;
 using ToDoList.ViewsModels.Commands;
@@ -12,7 +14,7 @@ namespace ToDoList.ViewsModels
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly ToDoListDBContext _DBcontext;
-        private User admin;
+        private User AuthenticatedUser;
 
 
         #region Settings
@@ -20,7 +22,22 @@ namespace ToDoList.ViewsModels
         public int WindowWidth { get; set; }
         #endregion
 
+        private ICommand _selectedItemChangedCommand;
+        public ICommand SelectedItemChangedCommand
+        {
+            get
+            {
+                if (_selectedItemChangedCommand == null)
+                    _selectedItemChangedCommand = new RelayCommand<object>( selectedItem => SelectedTreeViewItemLoadTasks(selectedItem));
+                return _selectedItemChangedCommand;
+            }
+        }
 
+        private void SelectedTreeViewItemLoadTasks(object selectedItem)
+        {
+            var selectedTasksListId = (selectedItem as TasksList).Id;
+            SelectedTaskListItems = new ObservableCollection<Task>(_DBcontext.Tasks.Where(t=>t.TaskListId==selectedTasksListId).ToList());
+        }
 
         private ObservableCollection<Task> _selectetTaskListItems;
         public ObservableCollection<Task> SelectedTaskListItems
@@ -83,21 +100,6 @@ namespace ToDoList.ViewsModels
             return string.IsNullOrEmpty(NewTaskListTitle) ? false : true;
         }
 
-        private ObservableCollection<TasksList> _taskListsWithoutCategory;
-        public ObservableCollection<TasksList> TaskListWithoutCategory
-        {
-            get
-            {
-                return _taskListsWithoutCategory;
-            }
-            set
-            {
-                _taskListsWithoutCategory = value;
-                OnPropertyChanged();
-            }
-        }
-
-
         #endregion
 
         #region Categories
@@ -148,7 +150,7 @@ namespace ToDoList.ViewsModels
             Category newCategory = new Category()
             {
                 Title = NewCategoryTitle,
-                User = admin
+                User = AuthenticatedUser
             };
 
             _DBcontext.Categories.Add(newCategory);
@@ -169,7 +171,7 @@ namespace ToDoList.ViewsModels
             _DBcontext = dBcontext;
 
             #region default user
-            admin = new User()
+            AuthenticatedUser = new User()
             {
                 LoginName = "admin",
                 Password = "admin"
@@ -180,13 +182,13 @@ namespace ToDoList.ViewsModels
                 WindowWidth = 1200,
                 DarkMode = true,
                 GridSplitterPosition = 200,
-                User = admin
+                User = AuthenticatedUser
             };
 
             _defaultCategory = new Category()
             {
                 Title = "Default Category",
-                User = admin
+                User = AuthenticatedUser
             };
             TasksList defaultTaskList = new TasksList()
             {
@@ -202,7 +204,7 @@ namespace ToDoList.ViewsModels
             };
 
 
-            _DBcontext.Users.Add(admin);
+            _DBcontext.Users.Add(AuthenticatedUser);
             _DBcontext.UserSettings.Add(defaultSettings);
             _DBcontext.Categories.Add(_defaultCategory);
             _DBcontext.TasksLists.Add(defaultTaskList);
@@ -218,8 +220,7 @@ namespace ToDoList.ViewsModels
             _DBcontext.SaveChanges();
             #endregion
 
-            TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == admin.Id).ToList());
-            SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.ToList());
+            TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == AuthenticatedUser.Id).ToList());
             AddNewCategoryCommand = new LambdaCommand(OnAddNewCategoryCommandExecuted, CanAddNewCategoryCommandExecute);
             AddNewTaskListCommand = new LambdaCommand(OnAddNewTaskListCommandExecuted, CanAddNewTaskListCommandExecute);
             //WindowWidth = _DBcontext.UserSettings.First(u=> u.UserId==admin.Id).WindowWidth;

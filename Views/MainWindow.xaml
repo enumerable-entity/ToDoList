@@ -63,23 +63,23 @@
         </WrapPanel>
 
 
-        <TreeView Grid.Column="0" Grid.Row="2"
+        <TreeView   Grid.Column="0" 
+                    Grid.Row="2"
+                    Name="treeView"
                     ItemsSource="{Binding TreeViewCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     MinWidth="220">
             <TreeView.Resources>
-                <Style
-        TargetType="TreeViewItem"
-        BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+                <Style  TargetType="TreeViewItem"
+                        BasedOn="{StaticResource MaterialDesignTreeViewItem}">
                     <Setter Property="materialDesign:TreeViewAssist.ExpanderSize"
                             Value="30" />
                     <Setter Property="materialDesign:TreeViewAssist.ShowSelection"
                             Value="True" />
-                    
                 </Style>
             </TreeView.Resources>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding TreeviewSelectedItemChanged}" 
+                    <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" 
                                            CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
