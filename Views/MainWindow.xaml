@@ -8,7 +8,8 @@
         xmlns:local="clr-namespace:ToDoList"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
         xmlns:ViewModels="clr-namespace:ToDoList.ViewsModels" 
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+        d:DataContext="{d:DesignInstance Type=ViewModels:MainViewModel}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -20,16 +21,17 @@
         WindowStartupLocation="CenterScreen"
         Title="Toddy" 
         Height="900" 
-        Width="1200" 
+        Width="{Binding WindowWidth, Mode=TwoWay}" 
         MinWidth="800" 
         MinHeight="500">
 
-    <Grid x:Name="MainGrid" ShowGridLines="False">
+    <Grid x:Name="MainGrid" ShowGridLines="True">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35pt"/>
             <RowDefinition Height="35pt"/>
-            <RowDefinition />
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="50pt"/>
             <RowDefinition Height="50pt"/>
         </Grid.RowDefinitions>
@@ -62,42 +64,59 @@
 
 
         <TreeView Grid.Column="0" Grid.Row="2"
-                    ItemsSource="{Binding Categories}"
+                    ItemsSource="{Binding TreeViewCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     MinWidth="220">
             <TreeView.Resources>
                 <Style
         TargetType="TreeViewItem"
         BasedOn="{StaticResource MaterialDesignTreeViewItem}">
-                    <Setter
-          Property="materialDesign:TreeViewAssist.ExpanderSize"
-          Value="30" />
-                    <Setter
-          Property="materialDesign:TreeViewAssist.ShowSelection"
-          Value="False" />
+                    <Setter Property="materialDesign:TreeViewAssist.ExpanderSize"
+                            Value="30" />
+                    <Setter Property="materialDesign:TreeViewAssist.ShowSelection"
+                            Value="True" />
                     
                 </Style>
             </TreeView.Resources>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding TreeviewSelectedItemChanged}" CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
+                    <i:InvokeCommandAction Command="{Binding TreeviewSelectedItemChanged}" 
+                                           CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding TaskLists}">
+                <HierarchicalDataTemplate ItemsSource="{Binding TaskLists,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate >
                             <WrapPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon  Foreground="{StaticResource PrimaryHueMidBrush}" Kind="ClipboardListOutline" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15pt" Width="15pt" Margin="30,0,0,0"/>
+                                <materialDesign:PackIcon  Foreground="{StaticResource PrimaryHueMidBrush}" 
+                                                          Kind="ClipboardListOutline" 
+                                                          VerticalAlignment="Center" 
+                                                          HorizontalAlignment="Center" 
+                                                          Height="15pt" 
+                                                          Width="15pt" 
+                                                          Margin="30,0,0,0"/>
 
-                                <TextBlock Text="{Binding Name}" Margin="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Title}" 
+                                           Margin="5,0,0,0" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center"/>
                             </WrapPanel>
                             
                         </HierarchicalDataTemplate>
                     </HierarchicalDataTemplate.ItemTemplate>
                     <WrapPanel  Orientation="Horizontal">
-                        <materialDesign:PackIcon  Kind="FolderText" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="15pt" Width="15pt" Margin="0"/>
+                        <materialDesign:PackIcon  Kind="FolderText" 
+                                                  Foreground="{StaticResource PrimaryHueMidBrush}" 
+                                                  VerticalAlignment="Center" 
+                                                  HorizontalAlignment="Center" 
+                                                  Height="15pt" 
+                                                  Width="15pt" 
+                                                  Margin="0"/>
 
-                        <TextBlock Text="{Binding Title}" Margin="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Title}" 
+                                   Margin="5,0,0,0" 
+                                   VerticalAlignment="Center" 
+                                   HorizontalAlignment="Center"/>
                     </WrapPanel>
                     
                 </HierarchicalDataTemplate>
@@ -105,8 +124,7 @@
 
         </TreeView>
         <!-- ======================== =============================================================================================-->
-
-
+        
         <DockPanel Margin="40,0,40,0" Grid.Column="2" Grid.Row="1">
             <CheckBox DockPanel.Dock="Left"
                       Height="31pt"
@@ -146,7 +164,7 @@
 
         </DockPanel>
 
-        <ListBox Name="MainList" Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
+        <ListBox Name="MainList" Margin="40,60,40,20" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate >
                 <DataTemplate >
                     <materialDesign:Card Height="40pt" HorizontalAlignment="Stretch" Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}" >
@@ -165,7 +183,7 @@
         </ListBox>
 
 
-        <materialDesign:Card Grid.Column="2" Grid.Row="4" Margin="10,5,10,5" UniformCornerRadius="0">
+        <materialDesign:Card Grid.Column="2" Grid.Row="5" Margin="10,5,10,5" UniformCornerRadius="0">
             <DockPanel LastChildFill="True">
                 <materialDesign:PackIcon  DockPanel.Dock="Left" Kind="PlusCircle" Foreground="{StaticResource PrimaryHueMidBrush}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt" Margin="10pt,0,0,0"/>
                 <Button x:Name="add_new_task_button" 
@@ -182,11 +200,12 @@
                             SpellCheck.IsEnabled="True"
                             Grid.Column="1" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10pt,0,10pt,0" MaxLength="129"/>
             </DockPanel>
+            <!--Add new category region-->
         </materialDesign:Card>
-        <materialDesign:Card Grid.Column="0" Grid.Row="4" Margin="10,5,10,5" UniformCornerRadius="0">
+        <materialDesign:Card Grid.Column="0" Grid.Row="5" Margin="10,5,10,5" UniformCornerRadius="0">
             <DockPanel LastChildFill="True">
                 <Button x:Name="add_new_category" 
-                        Command="{Binding AddCategoryCommand}"
+                        Command="{Binding AddNewCategoryCommand}"
                         ToolTip="Add new item to list" 
                         DockPanel.Dock="Right" 
                         Grid.Column="2" 
@@ -206,7 +225,7 @@
                     </Button.Content>
                 </Button>
                 <TextBox x:Name ="new_categry_tb" 
-                         Text="{Binding NewCategoryTitle}"
+                         Text="{Binding NewCategoryTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="New category" 
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                          SpellCheck.IsEnabled="False"
@@ -215,14 +234,19 @@
                          HorizontalAlignment="Stretch" 
                          VerticalAlignment="Center" 
                          Margin="10pt,0,10pt,15" 
-                         MaxLength="25"/>
+                         MaxLength="25">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding AddNewCategoryCommand}" Key="Return" />
+                    </TextBox.InputBindings>
+                </TextBox>
+
             </DockPanel>
         </materialDesign:Card>
         
-        <StackPanel Grid.Column="0" Grid.Row="3" Margin="10,5,10,5">
+        <StackPanel Grid.Column="0" Grid.Row="4" Margin="10,5,10,5">
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                    Text="{Binding NewCategory.Title, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding NewTaskListTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     VerticalAlignment="Top"
                     AcceptsReturn="False"
                     TextWrapping="Wrap"
@@ -231,7 +255,7 @@
                     MaxLines="1"
                     MaxLength="35">
                 <TextBox.InputBindings>
-                    <KeyBinding Command="{Binding AddCategoryCommand}" Key="Return" />
+                    <KeyBinding Command="{Binding AddNewTaskListCommand}" Key="Return" />
                 </TextBox.InputBindings>
             </TextBox>
         </StackPanel>

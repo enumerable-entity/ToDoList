@@ -48,7 +48,8 @@ namespace ToDoList
             modelBuilder.Entity<TasksList>()
                 .HasOne(tl => tl.Category)
                 .WithMany(p => p.TaskLists)
-                .HasForeignKey(tl => tl.CategoryId);
+                .HasForeignKey(tl => tl.CategoryId)
+                .IsRequired(false);
 
             modelBuilder.Entity<TasksList>()
                 .HasMany(tl => tl.Tasks)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -16,7 +17,7 @@ namespace ToDoList.Models
                 OnPropertyChanged();
             }
         }
-        public virtual IList<TasksList> TaskLists { get; set; }
+        public virtual ObservableCollection<TasksList> TaskLists { get; set; }
 
         public virtual User User { get; set; }
         public int UserId { get; set; }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList;
 
@@ -10,9 +11,10 @@ using ToDoList;
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(ToDoListDBContext))]
-    partial class ToDoListDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220519222634_TaskListCategoryRequiredChange")]
+    partial class TaskListCategoryRequiredChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -70,7 +72,7 @@ namespace ToDoList.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

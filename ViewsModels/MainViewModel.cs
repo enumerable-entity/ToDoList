@@ -3,24 +3,23 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
 using ToDoList.Models;
+using ToDoList.ViewsModels.Commands;
 
 namespace ToDoList.ViewsModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly ToDoListDBContext DBcontext;
+        private readonly ToDoListDBContext _DBcontext;
         private User admin;
-        
 
-        public string NewCategoryTitle { get; set; }
-        public TasksList NewTaskList { get; set; }
-        public Task NewTask { get; set; }
+
+        #region Settings
         public bool IsDarkModeEnabled { get; set; }
-        #region Categories
-        public ICommand AddCategoryCommand { get; set; }
+        public int WindowWidth { get; set; }
+        #endregion
+
 
 
         private ObservableCollection<Task> _selectetTaskListItems;
@@ -52,39 +51,123 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
-        #endregion
 
-        private ObservableCollection<Category> _categories;
-        public ObservableCollection<Category> Categories
+        #region TaskLists
+
+        private string _newTaskListTitle;
+        public string NewTaskListTitle
+        {
+            get { return _newTaskListTitle; }
+            set
+            {
+                _newTaskListTitle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand AddNewTaskListCommand { get; }
+        private void OnAddNewTaskListCommandExecuted(object sender)
+        {
+            TasksList newTaskList = new TasksList()
+            {
+                Title = NewTaskListTitle,
+                Category = _defaultCategory
+            };
+
+            _DBcontext.TasksLists.Add(newTaskList);
+            _DBcontext.SaveChanges();
+            NewTaskListTitle = string.Empty;
+        }
+        private bool CanAddNewTaskListCommandExecute(object sender)
+        {
+            return string.IsNullOrEmpty(NewTaskListTitle) ? false : true;
+        }
+
+        private ObservableCollection<TasksList> _taskListsWithoutCategory;
+        public ObservableCollection<TasksList> TaskListWithoutCategory
         {
             get
-           {
+            {
+                return _taskListsWithoutCategory;
+            }
+            set
+            {
+                _taskListsWithoutCategory = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        #endregion
+
+        #region Categories
+        private Category _defaultCategory;
+        private string _newCategoryTitile;
+        public string NewCategoryTitle
+        {
+            get { return _newCategoryTitile; }
+            set
+            {
+                _newCategoryTitile = value;
+                OnPropertyChanged();
+            }
+        }
+        public ICommand AddNewCategoryCommand { get; }
+
+        private ObservableCollection<Category> _categories;
+        public ObservableCollection<Category> TreeViewCategories
+        {
+            get
+            {
                 return _categories;
             }
             set
             {
-                if (_categories != null)
-                {
-                    foreach (var item in _categories)
-                    {
-                        item.PropertyChanged -= PropertyChanged;
-                    }
-                }
+                //if (_categories != null)
+                //{
+                //    foreach (var item in _categories)
+                //    {
+                //        item.PropertyChanged -= PropertyChanged;
+                //    }
+                //}
 
-                if (value != null)
-                {
-                    foreach (var item in value)
-                    {
-                        item.PropertyChanged += PropertyChanged;
-                    }
-                }
+                //if (value != null)
+                //{
+                //    foreach (var item in value)
+                //    {
+                //        item.PropertyChanged += PropertyChanged;
+                //    }
+                //}
                 _categories = value;
                 OnPropertyChanged();
             }
         }
 
-        public MainViewModel()
+        private void OnAddNewCategoryCommandExecuted(object sender)
         {
+            Category newCategory = new Category()
+            {
+                Title = NewCategoryTitle,
+                User = admin
+            };
+
+            _DBcontext.Categories.Add(newCategory);
+            _DBcontext.SaveChanges();
+            TreeViewCategories.Add(newCategory);
+            NewCategoryTitle = string.Empty;
+            OnPropertyChanged();
+        }
+        private bool CanAddNewCategoryCommandExecute(object sender)
+        {
+            return string.IsNullOrEmpty(NewCategoryTitle) ? false : true;
+        }
+
+        #endregion
+
+        public MainViewModel(ToDoListDBContext dBcontext)
+        {
+            _DBcontext = dBcontext;
+
             #region default user
             admin = new User()
             {
@@ -100,15 +183,15 @@ namespace ToDoList.ViewsModels
                 User = admin
             };
 
-            Category defaultCategory = new Category()
+            _defaultCategory = new Category()
             {
                 Title = "Default Category",
                 User = admin
             };
             TasksList defaultTaskList = new TasksList()
             {
-                Name = "Default task list",
-                Category = defaultCategory,
+                Title = "Default task list",
+                Category = _defaultCategory,
             };
             Task defaultTask = new Task()
             {
@@ -119,11 +202,11 @@ namespace ToDoList.ViewsModels
             };
 
 
-            DBcontext.Users.Add(admin);
-            DBcontext.UserSettings.Add(defaultSettings);
-            DBcontext.Categories.Add(defaultCategory);
-            DBcontext.TasksLists.Add(defaultTaskList);
-            DBcontext.Tasks.Add(defaultTask);
+            _DBcontext.Users.Add(admin);
+            _DBcontext.UserSettings.Add(defaultSettings);
+            _DBcontext.Categories.Add(_defaultCategory);
+            _DBcontext.TasksLists.Add(defaultTaskList);
+            _DBcontext.Tasks.Add(defaultTask);
 
 
             //_context.Categories.Where(x => x.UserId == 1).ToList();
@@ -132,16 +215,15 @@ namespace ToDoList.ViewsModels
             //        where Category.UserId == 1
             //        select Category.Title).ToList();
 
-            DBcontext.SaveChanges();
+            _DBcontext.SaveChanges();
             #endregion
-        }
 
-        public MainViewModel(ToDoListDBContext dBcontext)
-        {
-            Categories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).ToList());
+            TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == admin.Id).ToList());
             SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.ToList());
-            IsDarkModeEnabled = false;
-            
+            AddNewCategoryCommand = new LambdaCommand(OnAddNewCategoryCommandExecuted, CanAddNewCategoryCommandExecute);
+            AddNewTaskListCommand = new LambdaCommand(OnAddNewTaskListCommandExecuted, CanAddNewTaskListCommandExecute);
+            //WindowWidth = _DBcontext.UserSettings.First(u=> u.UserId==admin.Id).WindowWidth;
+            WindowWidth = 1200;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -151,17 +233,5 @@ namespace ToDoList.ViewsModels
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void AddCategory(object sender, RoutedEventArgs e)
-        {
-            Category newCategory = new Category()
-            {
-                Title = NewCategoryTitle,
-                User = admin
-            };
-
-            DBcontext.Categories.Add(newCategory);
-            Categories.Add(newCategory);
-            OnPropertyChanged();
-        }
     }
 }

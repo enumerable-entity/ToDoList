@@ -2,6 +2,7 @@
 using System.Windows;
 using ToDoList.Views;
 using ToDoList.ViewsModels;
+using ToDoList.ViewsModels.Commands;
 
 namespace ToDoList
 {
@@ -20,6 +21,7 @@ namespace ToDoList
             services.AddDbContext<ToDoListDBContext>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<LambdaCommand>();
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
