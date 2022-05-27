@@ -187,7 +187,30 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
+        private Task _selectedTask;
+        public Task SelectedTask
+        {
+            get
+            {
+                return _selectedTask;
+            }
+            set
+            {
+                _selectedTask = value;
+                OnPropertyChanged();
+            }
+        }
         public ICommand AddNewTaskCommand { get; }
+        private ICommand _changeTaskStatusCommand;
+        public ICommand ChangeTaskStatusCommand
+        {
+            get
+            {
+                if (_changeTaskStatusCommand == null)
+                    _changeTaskStatusCommand = new RelayCommand<object>(selectedItem => OnChangeTaskStatusCommand(selectedItem));
+                return _changeTaskStatusCommand;
+            }
+        }
         private void OnAddNewTaskCommandExecuted(object sender)
         {
             Task newTask = new Task()
@@ -208,9 +231,15 @@ namespace ToDoList.ViewsModels
         {
             return string.IsNullOrEmpty(NewTaskContent) ? false : true;
         }
-
-
-
+        private void OnChangeTaskStatusCommand(object sender)
+        {
+            //SelectedTask.IsCompleted = !SelectedTask.IsCompleted;
+            var selectedTask = (Task)sender;
+            selectedTask.IsCompleted = !selectedTask.IsCompleted;
+            _DBcontext.SaveChanges();
+            OnPropertyChanged("SelectedTaskListItems");
+        }
+        private bool CanChangeTaskStatusCommandExecute(object sender) => true;
 
         #endregion
 
@@ -236,11 +265,12 @@ namespace ToDoList.ViewsModels
 
             _selectedTasksListId = Int32.MaxValue;
             SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.TaskListId == Int32.MaxValue).ToList());
-            
+
             TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == AuthenticatedUser.Id).ToList());
             AddNewCategoryCommand = new LambdaCommand(OnAddNewCategoryCommandExecuted, CanAddNewCategoryCommandExecute);
             AddNewTaskListCommand = new LambdaCommand(OnAddNewTaskListCommandExecuted, CanAddNewTaskListCommandExecute);
             AddNewTaskCommand = new LambdaCommand(OnAddNewTaskCommandExecuted, CanAddNewTaskCommandExecute);
+            //ChangeTaskStatusCommand = new LambdaCommand(OnChangeTaskStatusCommand, CanChangeTaskStatusCommandExecute);
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
             WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
 

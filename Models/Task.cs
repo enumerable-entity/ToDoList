@@ -11,8 +11,16 @@ namespace ToDoList.Models
         public string Content { get; set; }
 
         public DateTime? CompleteDate { get; set; }
-
-        public bool IsCompleted { get; set; }
+        private bool _isCompleted;
+        public bool IsCompleted
+        {
+            get { return _isCompleted; }
+            set
+            {
+                _isCompleted = value;
+                OnPropertyChanged();
+            }
+        }
 
         public virtual TasksList TaskList { get; set; }
         public int TaskListId { get; set; }

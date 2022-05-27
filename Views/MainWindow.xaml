@@ -23,7 +23,8 @@
         Height="900" 
         Width="{Binding WindowWidth, Mode=TwoWay}" 
         MinWidth="800" 
-        MinHeight="500">
+        MinHeight="500"
+        Name="MainWindowRoot">
 
     <Grid x:Name="MainGrid" ShowGridLines="False">
 
@@ -69,7 +70,7 @@
                                      VerticalContentAlignment="Center"
                                      VerticalAlignment="Center">
             <materialDesign:Card.InputBindings>
-                <MouseBinding Command="{Binding ShowMyDayTasksCommand}"></MouseBinding>
+                <MouseBinding Command="{Binding ShowMyDayTasksCommand}" MouseAction="LeftClick" ></MouseBinding>
             </materialDesign:Card.InputBindings>
             <DockPanel LastChildFill="True">
                 <materialDesign:PackIcon  DockPanel.Dock="Left" Foreground="{StaticResource PrimaryHueMidBrush}" 
@@ -152,7 +153,10 @@
         <DockPanel Margin="0,0,40,0" Grid.Column="2" Grid.Row="1">
             <CheckBox DockPanel.Dock="Left"
                       Height="31pt"
-                      Margin="5pt,0,15pt,0" Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" IsChecked="False" Content="Show only in progress"/>
+                      Margin="5pt,0,15pt,0" 
+                      Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" 
+                      IsChecked="False" 
+                      Content="Show only in progress"/>
             <ComboBox DockPanel.Dock="Left"
                         Style="{StaticResource MaterialDesignFilledComboBox}"
                         materialDesign:HintAssist.Hint="Sort by"
@@ -188,18 +192,85 @@
 
         </DockPanel>
 
-        <ListBox Name="MainList" Margin="0,60,10,0" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding SelectedTaskListItems}" Width="auto" HorizontalContentAlignment="Stretch">
+        <ListBox Name="MainList" 
+                 Margin="0,60,10,0" 
+                 Grid.Column="2" 
+                 Grid.Row="1" 
+                 Grid.RowSpan="3" 
+                 ItemsSource="{Binding SelectedTaskListItems}"
+                 SelectedItem ="{Binding SelectedTask}"
+                 Width="auto" 
+                 HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate >
-                <DataTemplate >
+                <DataTemplate>
                     <materialDesign:Card Height="40pt" HorizontalAlignment="Stretch" Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}" >
                         <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" >
-                            <Button x:Name="button44445"
-                                    DockPanel.Dock="Left"  Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" FlowDirection="LeftToRight"  Width="30" ScrollViewer.CanContentScroll="True" Padding="0,0,0,0" Margin="13,0,13,0">
-                                <materialDesign:PackIcon Kind="RadioboxBlank" Foreground="{StaticResource PrimaryHueMidBrush}" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25pt" Width="25pt"/>
+                            <Button DockPanel.Dock="Left"  
+                                    Background="{x:Null}" 
+                                    BorderBrush="{x:Null}" 
+                                    HorizontalContentAlignment="Center" 
+                                    FlowDirection="LeftToRight"  
+                                    Width="30" 
+                                    Padding="0,0,0,0"
+                                    Margin="13,0,13,0"
+                                    Command="{Binding ElementName=MainWindowRoot, Path=DataContext.ChangeTaskStatusCommand}"
+                                    CommandParameter="{Binding}">
+                                
+                                <materialDesign:PackIcon Kind="RadioboxBlank" 
+                                                         Foreground="{StaticResource PrimaryHueMidBrush}" 
+                                                         Background="Transparent" 
+                                                         VerticalAlignment="Center" 
+                                                         HorizontalAlignment="Center" 
+                                                         Height="25pt" 
+                                                         Width="25pt">
+                                    <materialDesign:PackIcon.Style>
+                                        <Style TargetType="materialDesign:PackIcon">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="true">
+                                                    <Setter Property="Kind" Value="RadioboxMarked"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </materialDesign:PackIcon.Style>
+                                </materialDesign:PackIcon>
                             </Button>
-                            <Label Content="{Binding CompleteDate}" DockPanel.Dock="Right" Width="60pt" VerticalContentAlignment="Center"/>
-                            <materialDesign:PackIcon Kind="Calendar" Foreground="{StaticResource PrimaryHueMidBrush}" DockPanel.Dock="Right" VerticalAlignment="Center" Height="15pt" Width="15pt" Margin="10,0,0,0"/>
-                            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center"  FontSize="12" Text="{Binding Content}"></TextBlock>
+                            <TextBlock  Text="{Binding CompleteDate, StringFormat=d}"
+                                        DockPanel.Dock="Right"
+                                        Width="60pt" 
+                                        VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCompleted}" Value="true">
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <materialDesign:PackIcon Kind="Calendar" 
+                                                     Foreground="{StaticResource PrimaryHueMidBrush}" 
+                                                     DockPanel.Dock="Right" 
+                                                     VerticalAlignment="Center" 
+                                                     Height="15pt" 
+                                                     Width="15pt" 
+                                                     Margin="10,0,5,0"/>
+                            <TextBlock TextWrapping="Wrap" 
+                                       VerticalAlignment="Center"  
+                                       FontSize="12" 
+                                       Text="{Binding Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCompleted}" Value="true">
+                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+
+                                </TextBlock.Style>
+                            </TextBlock>
                         </DockPanel>
                     </materialDesign:Card>
                 </DataTemplate>
