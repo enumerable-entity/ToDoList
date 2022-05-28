@@ -74,7 +74,7 @@ namespace ToDoList
                 LoginName = "admin",
                 Password = "admin",
                 IsAuthenticated = true
-                
+
             });
 
             modelBuilder.Entity<UserSettings>().HasData(new UserSettings()
@@ -104,7 +104,7 @@ namespace ToDoList
 
             modelBuilder.Entity<TasksList>().HasData(new TasksList()
             {
-                Id = Int32.MaxValue,
+                Id = 2,
                 Title = "My day",
 
             });
@@ -118,8 +118,6 @@ namespace ToDoList
                 TaskListId = 1
 
             });
-
-            //modelBuilder.Entity<Order>().Property(t => t.OrderDate).IsRequired();
         }
 
 

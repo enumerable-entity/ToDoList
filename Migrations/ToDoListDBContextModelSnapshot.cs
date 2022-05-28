@@ -106,7 +106,7 @@ namespace ToDoList.Migrations
                         },
                         new
                         {
-                            Id = 2147483647,
+                            Id = 2,
                             Title = "My day"
                         });
                 });

@@ -11,8 +11,8 @@ using ToDoList;
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(ToDoListDBContext))]
-    [Migration("20220520192348_Init2")]
-    partial class Init2
+    [Migration("20220528102126_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -108,7 +108,7 @@ namespace ToDoList.Migrations
                         },
                         new
                         {
-                            Id = 2147483647,
+                            Id = 2,
                             Title = "My day"
                         });
                 });

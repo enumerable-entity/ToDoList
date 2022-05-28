@@ -45,7 +45,14 @@
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.RowSpan="6"/>
 
 
-        <WrapPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Margin="40,0,40,0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Width="auto">
+        <WrapPanel Grid.Row="0" 
+                   Grid.Column="2" 
+                   HorizontalAlignment="Right" 
+                   Margin="40,0,0,0" 
+                   Orientation="Horizontal" 
+                   VerticalAlignment="Center" 
+                   Height="auto"
+                   Width="auto">
             <Label Content="Light mode" Margin="0,0,9,0" FontSize="14" IsEnabled="True">
 
             </Label>
@@ -150,13 +157,14 @@
         </TreeView>
         <!-- ======================== =============================================================================================-->
         
-        <DockPanel Margin="0,0,40,0" Grid.Column="2" Grid.Row="1">
+        <DockPanel Margin="0,0,0,0" Grid.Column="2" Grid.Row="1">
             <CheckBox DockPanel.Dock="Left"
                       Height="31pt"
                       Margin="5pt,0,15pt,0" 
                       Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" 
-                      IsChecked="False" 
+                      IsChecked="{Binding ShowOnlyInProgres, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       Content="Show only in progress"/>
+            
             <ComboBox DockPanel.Dock="Left"
                         Style="{StaticResource MaterialDesignFilledComboBox}"
                         materialDesign:HintAssist.Hint="Sort by"
@@ -177,16 +185,20 @@
                 <ComboBoxItem>
                     Date desc
                 </ComboBoxItem>
+                <ComboBoxItem>
+                    Status
+                </ComboBoxItem>
             </ComboBox>
 
-            <TextBox DockPanel.Dock="Right"
+            <TextBox    Text="{Binding Path=TaskFilterSubString, UpdateSourceTrigger=PropertyChanged}"
+                        DockPanel.Dock="Right"
                         Margin="0,0,10,0"
                         Style="{StaticResource MaterialDesignFilledTextBox}"
                         VerticalAlignment="Top"
                         HorizontalAlignment="Right"
                         AcceptsReturn="True"
                         TextWrapping="Wrap"
-                        Width="180"
+                        Width="200"
                         MaxWidth="400"
                         materialDesign:HintAssist.Hint="Find todo's" />
 
@@ -197,7 +209,7 @@
                  Grid.Column="2" 
                  Grid.Row="1" 
                  Grid.RowSpan="3" 
-                 ItemsSource="{Binding SelectedTaskListItems}"
+                 ItemsSource="{Binding SelectedTasksView}"
                  SelectedItem ="{Binding SelectedTask}"
                  Width="auto" 
                  HorizontalContentAlignment="Stretch">
@@ -225,8 +237,9 @@
                                                          Width="25pt">
                                     <materialDesign:PackIcon.Style>
                                         <Style TargetType="materialDesign:PackIcon">
+                                            <Setter Property="Kind" Value="RadioboxBlank"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsCompleted}" Value="true">
+                                                <DataTrigger Binding="{Binding Path=IsCompleted}" Value="true">
                                                     <Setter Property="Kind" Value="RadioboxMarked"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -248,13 +261,25 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+                            
                             <materialDesign:PackIcon Kind="Calendar" 
                                                      Foreground="{StaticResource PrimaryHueMidBrush}" 
                                                      DockPanel.Dock="Right" 
                                                      VerticalAlignment="Center" 
                                                      Height="15pt" 
                                                      Width="15pt" 
-                                                     Margin="10,0,5,0"/>
+                                                     Margin="10,0,5,0">
+                                <materialDesign:PackIcon.Style>
+                                    <Style TargetType="materialDesign:PackIcon">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCompleted}" Value="true">
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:PackIcon.Style>
+                            </materialDesign:PackIcon>
+                            
                             <TextBlock TextWrapping="Wrap" 
                                        VerticalAlignment="Center"  
                                        FontSize="12" 

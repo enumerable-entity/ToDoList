@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ToDoList.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -107,6 +107,11 @@ namespace ToDoList.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "TasksLists",
+                columns: new[] { "Id", "CategoryId", "Title" },
+                values: new object[] { 2, null, "My day" });
 
             migrationBuilder.InsertData(
                 table: "Users",
