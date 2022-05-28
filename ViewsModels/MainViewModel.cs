@@ -299,7 +299,69 @@ namespace ToDoList.ViewsModels
                 }
             }
         }
+        private bool FilterTasks(object obj)
+        {
+            if (obj is Task task)
+            {
 
+                if (!ShowOnlyInProgres)
+                {
+                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase) && task.IsCompleted == !ShowOnlyInProgres;
+                }
+
+            }
+            return false;
+        }
+
+        private string _taskListSelectedSorting;
+        public string TaskListSelectedSorting
+        {
+            get
+            {
+                return _taskListSelectedSorting;
+            }
+            set
+            {
+                if (value != _taskListSelectedSorting)
+                {
+                    _taskListSelectedSorting = value;
+                    OnPropertyChanged();
+                    SelectedTasksView.SortDescriptions.Remove(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending));
+                    SelectedTasksView.SortDescriptions.Remove(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
+                    SelectedTasksView.SortDescriptions.Remove(new SortDescription(nameof(Task.IsCompleted), ListSortDirection.Ascending));
+
+                    SelectedTasksView.SortDescriptions.Add(sortingConverter(TaskListSelectedSorting));
+                    SelectedTasksView.Refresh();
+                }
+            }
+        }
+
+        class SortingConverter
+        {
+            public ListSortDirection SortingDirection { get; set; }
+            public SortDescription SortDescription { get; set; }
+        }
+
+        private SortDescription sortingConverter(string sortFromView)
+        {
+            //SortingConverter sortingConverter = new SortingConverter();
+
+            if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date ascending") {
+                return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending);
+            }
+            else if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date descending")
+            { return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending); }
+            else if (sortFromView == "System.Windows.Controls.ComboBoxItem: Status")
+            {
+                return new SortDescription(nameof(Task.IsCompleted), ListSortDirection.Ascending);
+            }
+            return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending);
+
+        }
 
 
         #endregion
@@ -339,32 +401,13 @@ namespace ToDoList.ViewsModels
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
             WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
 
-            ShowOnlyInProgres = false;
-
-
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;
             SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
-
+            
 
         }
 
-        private bool FilterTasks(object obj)
-        {
-            if (obj is Task task)
-            {
 
-                if (!ShowOnlyInProgres)
-                {
-                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase);
-                }
-                else
-                {
-                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase) && task.IsCompleted == !ShowOnlyInProgres;
-                }
-
-            }
-            return false;
-        }
     }
 }

@@ -159,7 +159,7 @@
         
         <DockPanel Margin="0,0,0,0" Grid.Column="2" Grid.Row="1">
             <CheckBox DockPanel.Dock="Left"
-                      Height="31pt"
+                      Height="34pt"
                       Margin="5pt,0,15pt,0" 
                       Style="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" 
                       IsChecked="{Binding ShowOnlyInProgres, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -169,8 +169,8 @@
                         Style="{StaticResource MaterialDesignFilledComboBox}"
                         materialDesign:HintAssist.Hint="Sort by"
                         materialDesign:TextFieldAssist.HasClearButton="True"
-                        Width="140"
-                        Height="42">
+                        Width="160"
+                        Height="45">
                 <ComboBox.SelectedItem>
                     <Binding
                             Path="TaskListSelectedSorting"
@@ -179,10 +179,10 @@
                     </Binding>
                 </ComboBox.SelectedItem>
                 <ComboBoxItem>
-                    Date asc
+                    Date ascending
                 </ComboBoxItem>
                 <ComboBoxItem>
-                    Date desc
+                    Date descending
                 </ComboBoxItem>
                 <ComboBoxItem>
                     Status
