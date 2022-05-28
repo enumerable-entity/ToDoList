@@ -52,8 +52,8 @@ namespace ToDoList.ViewsModels
                 _selectedTasksListId = (int)taskListId;
                 SelectedTaskListItems.Clear();
                 var load = _DBcontext.Tasks.Where(t => t.TaskListId == _selectedTasksListId).ToList();
-                
-                foreach(var task in load)
+
+                foreach (var task in load)
                 {
                     SelectedTaskListItems.Add(task);
                 }
@@ -261,6 +261,7 @@ namespace ToDoList.ViewsModels
             var selectedTask = (Task)sender;
             selectedTask.IsCompleted = !selectedTask.IsCompleted;
             _DBcontext.SaveChanges();
+            SelectedTasksView.Refresh();
         }
 
         private bool _showOnlyInProgres;
@@ -272,8 +273,12 @@ namespace ToDoList.ViewsModels
             }
             set
             {
-                _showOnlyInProgres = value;
-                OnPropertyChanged("SelectedTaskListItems");
+                if (value != _showOnlyInProgres)
+                {
+                    _showOnlyInProgres = value;
+                    OnPropertyChanged();
+                    SelectedTasksView.Refresh();
+                }
 
             }
         }
@@ -339,16 +344,25 @@ namespace ToDoList.ViewsModels
 
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;
-
+            SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
 
 
         }
 
         private bool FilterTasks(object obj)
         {
-            if(obj is Task task)
+            if (obj is Task task)
             {
-                return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase);
+
+                if (!ShowOnlyInProgres)
+                {
+                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase) && task.IsCompleted == !ShowOnlyInProgres;
+                }
+
             }
             return false;
         }

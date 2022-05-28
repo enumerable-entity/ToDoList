@@ -9,6 +9,7 @@ namespace ToDoList.Views
         {
             InitializeComponent();
             this.DataContext = mvm;  //Dependency injection
+
         }
     }
 }
