@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using MaterialDesignThemes.Wpf;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using ToDoList.Models;
 using ToDoList.ViewsModels.Commands;
 
@@ -26,7 +28,32 @@ namespace ToDoList.ViewsModels
         private UserSettings UserSettings { get; set; }
 
         #region Settings
-        public bool IsDarkModeEnabled { get; set; }
+        private bool _isDarkModeEanbled;
+        public bool IsDarkModeEnabled {
+            get { return _isDarkModeEanbled; } 
+            set
+            {
+                _isDarkModeEanbled = value;
+                SwitchTheme();
+            } 
+        }
+
+        public void SwitchTheme()
+        {
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
+            if (_isDarkModeEanbled)
+            {
+                theme.SetBaseTheme(Theme.Dark);
+            }
+            else
+            {
+                theme.SetBaseTheme(Theme.Light);
+            }
+            paletteHelper.SetTheme(theme);
+        }
+
+
         public int WindowWidth { get; set; }
         #endregion
 
@@ -446,7 +473,7 @@ namespace ToDoList.ViewsModels
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;
             SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
-            
+
 
         }
 

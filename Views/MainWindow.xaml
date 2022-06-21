@@ -62,7 +62,7 @@
                    VerticalAlignment="Center"
                    Height="auto"
                    Width="auto">
-            <Label Content="Light mode"
+            <Label Content="Dark mode"
                    Margin="0,0,9,0"
                    FontSize="14"
                    IsEnabled="True">
@@ -119,7 +119,8 @@
                     MinWidth="220"
                     Margin="0,10pt,0,0"
                     dd:DragDrop.IsDragSource="True"
-                    dd:DragDrop.IsDropTarget="True">
+                    dd:DragDrop.IsDropTarget="True"
+                    >
             <TreeView.Resources>
                 <Style  TargetType="TreeViewItem"
                         BasedOn="{StaticResource MaterialDesignTreeViewItem}">
@@ -128,7 +129,7 @@
                     <Setter Property="materialDesign:TreeViewAssist.ShowSelection"
                             Value="True" />
                 </Style>
-                <local2:ContextMenuDataContextProxy x:Key="DataContextProxy"
+                <local2:ContextMenuDataContextProxy x:Key="DataContextProxyy"
                                                     Data="{Binding}" />
             </TreeView.Resources>
             <i:Interaction.Triggers>
@@ -137,6 +138,7 @@
                                            CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+            
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding TaskLists,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <HierarchicalDataTemplate.ItemTemplate>
@@ -177,52 +179,60 @@
 
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <TreeView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem 
-                                Width="auto"
-                              Command="{Binding Source={StaticResource DataContextProxy}, Path=Data.DeleteTaskListCommand}">
-                        <MenuItem.Header>
-                            <WrapPanel  Orientation="Horizontal">
-                                <materialDesign:PackIcon  Kind="Trash"
-                                                          Foreground="{StaticResource PrimaryHueMidBrush}"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Center"
-                                                          Height="15pt"
-                                                          Width="15pt"
-                                                          Margin="0" />
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Width="auto"
+                                          Command="{Binding Source={StaticResource DataContextProxyy}, Path=Data.DeleteTaskListCommand}">
+                                    <MenuItem.Header>
+                                        <TextBlock Text="Delete"
+                                                   FontSize="13pt"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" />
+                                    </MenuItem.Header>
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon  Kind="Trash"
+                                                                  Foreground="{StaticResource PrimaryHueMidBrush}"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Center"
+                                                                  Height="15pt"
+                                                                  Width="15pt"
+                                                                  Margin="0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator></Separator>
+                                <MenuItem Width="auto">
+                                    <MenuItem.Header>
+                                        <WrapPanel  Orientation="Horizontal">
 
-                                <TextBlock Text="Delete"
-                                           FontSize="13pt"
-                                           Margin="10,0,0,0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
-                            </WrapPanel>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem Width="auto">
-                        <MenuItem.Header>
-                            <WrapPanel  Orientation="Horizontal">
-                                <materialDesign:PackIcon  Kind="Rename"
-                                                          Foreground="{StaticResource PrimaryHueMidBrush}"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Center"
-                                                          Height="15pt"
-                                                          Width="15pt"
-                                                          Margin="0" />
 
-                                <TextBlock Text="Rename"
-                                           FontSize="13pt"
-                                           Margin="10,0,0,0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
-                            </WrapPanel>
-                        </MenuItem.Header>
-                    </MenuItem>
-                </ContextMenu>
-            </TreeView.ContextMenu>
+                                            <TextBlock Text="Rename"
+                                                       FontSize="13pt"
+                                                       Margin="10,0,0,0"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center" />
+                                        </WrapPanel>
+                                    </MenuItem.Header>
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon  Kind="Rename"
+                                                                  Foreground="{StaticResource PrimaryHueMidBrush}"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Center"
+                                                                  Height="15pt"
+                                                                  Width="15pt"
+                                                                  Margin="0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.ItemContainerStyle>
         </TreeView>
-        <!-- ======================== =============================================================================================-->
+        <!-- ====================================================================================================================-->
 
         <DockPanel Margin="0,0,0,0"
                    Grid.Column="2"
@@ -280,19 +290,17 @@
                  SelectedItem="{Binding SelectedTask}"
                  Width="auto"
                  HorizontalContentAlignment="Stretch"
-                 dd:DragDrop.IsDragSource="True"
-                 >
+                 dd:DragDrop.IsDragSource="True">
             <ListBox.Resources>
                 <local2:ContextMenuDataContextProxy x:Key="DataContextProxy"
-                                            Data="{Binding}" />
+                                                    Data="{Binding}" />
             </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <materialDesign:Card Height="40pt"
                                          HorizontalAlignment="Stretch"
                                          Width="{Binding ElementName=MainList, Path=Width, Mode=OneWay}"
-                                         x:Name="ListCard"
-                                         >
+                                         x:Name="ListCard">
                         <DockPanel LastChildFill="True"
                                    HorizontalAlignment="Stretch">
                             <Button DockPanel.Dock="Left"
@@ -400,8 +408,7 @@
                         <Setter.Value>
                             <ContextMenu>
                                 <MenuItem Width="auto"
-                                          Command="{Binding Source={StaticResource DataContextProxy}, Path=Data.DeleteTaskCommand}"
-                                          >
+                                          Command="{Binding Source={StaticResource DataContextProxy}, Path=Data.DeleteTaskCommand}">
                                     <MenuItem.Header>
                                         <TextBlock Text="Delete"
                                                    FontSize="13pt"
