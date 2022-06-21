@@ -63,9 +63,6 @@ namespace ToDoList.ViewsModels
 
 
 
-
-
-
         private ObservableCollection<Task> _selectetTaskListItems;
         public ObservableCollection<Task> SelectedTaskListItems
         {
@@ -131,6 +128,24 @@ namespace ToDoList.ViewsModels
             return string.IsNullOrEmpty(NewTaskListTitle) ? false : true;
         }
 
+        private ICommand _deleteTaskListCommand;
+        public ICommand DeleteTaskListCommand
+        {
+            get
+            {
+                if (_deleteTaskListCommand == null)
+                    _deleteTaskListCommand = new RelayCommand<Task>(selectedItem => {
+                        var taskListToDelete = _DBcontext.TasksLists.FirstOrDefault(tl => tl.Id == _selectedTasksListId);
+                        _DBcontext.TasksLists.Remove(taskListToDelete);
+                        _DBcontext.SaveChanges();
+                        Category category = TreeViewCategories.FirstOrDefault(cat => cat.Id == taskListToDelete.CategoryId);
+                        category.TaskLists.Remove(taskListToDelete);
+
+                        
+                    });
+                return _deleteTaskCommand;
+            }
+        }
         #endregion
 
         #region Categories
@@ -264,6 +279,22 @@ namespace ToDoList.ViewsModels
             SelectedTasksView.Refresh();
         }
 
+        private ICommand _deleteTaskCommand;
+        public ICommand DeleteTaskCommand
+        {
+            get
+            {
+                if (_deleteTaskCommand == null)
+                    _deleteTaskCommand = new RelayCommand<Task>(selectedItem => { 
+                        _DBcontext.Tasks.Remove(SelectedTask);
+                        _DBcontext.SaveChanges();
+                        SelectedTaskListItems.Remove(SelectedTask);
+                        SelectedTasksView.Refresh();
+                    });
+                return _deleteTaskCommand;
+            }
+        }
+
         private bool _showOnlyInProgres;
         public bool ShowOnlyInProgres
         {
@@ -383,9 +414,16 @@ namespace ToDoList.ViewsModels
             OnPropertyChanged();
         }
 
+
+
+
+
+
         public MainViewModel(ToDoListDBContext dBcontext)
         {
             _DBcontext = dBcontext;
+
+            dBcontext.Database.Migrate();
             _defaultCategory = dBcontext.Categories.First(c => c.Id == 1);
             AuthenticatedUser = dBcontext.Users.First<User>(u => u.IsAuthenticated == true);
 
@@ -399,6 +437,10 @@ namespace ToDoList.ViewsModels
             AddNewTaskListCommand = new LambdaCommand(OnAddNewTaskListCommandExecuted, CanAddNewTaskListCommandExecute);
             AddNewTaskCommand = new LambdaCommand(OnAddNewTaskCommandExecuted, CanAddNewTaskCommandExecute);
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
+
+
+
+
             WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
 
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
