@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using ToDoList.Models;
 using ToDoList.ViewsModels.Commands;
 
@@ -29,13 +28,16 @@ namespace ToDoList.ViewsModels
 
         #region Settings
         private bool _isDarkModeEanbled;
-        public bool IsDarkModeEnabled {
-            get { return _isDarkModeEanbled; } 
+        public bool IsDarkModeEnabled
+        {
+            get { return _isDarkModeEanbled; }
             set
             {
                 _isDarkModeEanbled = value;
                 SwitchTheme();
-            } 
+                UserSettings.DarkMode = IsDarkModeEnabled;
+                _DBcontext.SaveChanges();
+            }
         }
 
         public void SwitchTheme()
@@ -161,14 +163,15 @@ namespace ToDoList.ViewsModels
             get
             {
                 if (_deleteTaskListCommand == null)
-                    _deleteTaskListCommand = new RelayCommand<Task>(selectedItem => {
+                    _deleteTaskListCommand = new RelayCommand<Task>(selectedItem =>
+                    {
                         var taskListToDelete = _DBcontext.TasksLists.FirstOrDefault(tl => tl.Id == _selectedTasksListId);
                         _DBcontext.TasksLists.Remove(taskListToDelete);
                         _DBcontext.SaveChanges();
                         Category category = TreeViewCategories.FirstOrDefault(cat => cat.Id == taskListToDelete.CategoryId);
                         category.TaskLists.Remove(taskListToDelete);
 
-                        
+
                     });
                 return _deleteTaskCommand;
             }
@@ -312,7 +315,8 @@ namespace ToDoList.ViewsModels
             get
             {
                 if (_deleteTaskCommand == null)
-                    _deleteTaskCommand = new RelayCommand<Task>(selectedItem => { 
+                    _deleteTaskCommand = new RelayCommand<Task>(selectedItem =>
+                    {
                         _DBcontext.Tasks.Remove(SelectedTask);
                         _DBcontext.SaveChanges();
                         SelectedTaskListItems.Remove(SelectedTask);
@@ -408,7 +412,8 @@ namespace ToDoList.ViewsModels
         {
             //SortingConverter sortingConverter = new SortingConverter();
 
-            if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date ascending") {
+            if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date ascending")
+            {
                 return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending);
             }
             else if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date descending")
@@ -455,7 +460,7 @@ namespace ToDoList.ViewsModels
             AuthenticatedUser = dBcontext.Users.First<User>(u => u.IsAuthenticated == true);
 
             UserSettings = dBcontext.UserSettings.First<UserSettings>(us => us.User == AuthenticatedUser);
-
+            IsDarkModeEnabled = UserSettings.DarkMode;
             _selectedTasksListId = 2;
             SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.TaskListId == 2).ToList());
 
