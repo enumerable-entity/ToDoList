@@ -326,6 +326,23 @@ namespace ToDoList.ViewsModels
             }
         }
 
+        private ICommand _renameTaskCommand;
+        public ICommand RenameTaskCommand
+        {
+            get
+            {
+                if (_renameTaskCommand == null)
+                    _renameTaskCommand = new RelayCommand<Task>(selectedItem =>
+                    {
+
+
+                        _DBcontext.SaveChanges();
+                        SelectedTasksView.Refresh();
+                    });
+                return _renameTaskCommand;
+            }
+        }
+
         private bool _showOnlyInProgres;
         public bool ShowOnlyInProgres
         {
@@ -445,11 +462,6 @@ namespace ToDoList.ViewsModels
             SelectedTasksView.Refresh();
             OnPropertyChanged();
         }
-
-
-
-
-
 
         public MainViewModel(ToDoListDBContext dBcontext)
         {
