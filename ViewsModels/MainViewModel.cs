@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDoList.Models;
@@ -244,6 +246,35 @@ namespace ToDoList.ViewsModels
 
         #region Tasks
 
+        private Visibility _textBlockSelectedTaskVisibility;
+        private Visibility _textBoxSelectedTaskVisibility;
+
+        public Visibility TextBlockSelectedTaskVisibility
+        {
+            get
+            {
+                return _textBlockSelectedTaskVisibility;
+            }
+            set
+            {
+                _textBlockSelectedTaskVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility TextBoxSelectedTaskVisibility
+        {
+            get
+            {
+                return _textBoxSelectedTaskVisibility;
+            }
+            set
+            {
+                _textBoxSelectedTaskVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private string _newTaskContent;
         public string NewTaskContent
         {
@@ -254,6 +285,19 @@ namespace ToDoList.ViewsModels
             set
             {
                 _newTaskContent = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _editedTaskContent;
+        public string EditedTaskContent
+        {
+            get
+            {
+                return _editedTaskContent;
+            }
+            set
+            {
+                _editedTaskContent = value;
                 OnPropertyChanged();
             }
         }
@@ -334,15 +378,34 @@ namespace ToDoList.ViewsModels
                 if (_renameTaskCommand == null)
                     _renameTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
-
-
-                        _DBcontext.SaveChanges();
+                        var selectedTask = (Task)selectedItem;
+                        selectedTask.IsInEditMode = true;
                         SelectedTasksView.Refresh();
                     });
                 return _renameTaskCommand;
             }
         }
+        private ICommand _finishRenameTaskCommand;
+        public ICommand FinishRenameTaskCommand
+        {
+            get
+            {
+                if (_finishRenameTaskCommand == null)
+                    _finishRenameTaskCommand = new RelayCommand<Task>(selectedItem =>
+                    {
 
+                        selectedItem.Content = EditedTaskContent;
+                        SelectedTask.IsInEditMode = false;
+
+                        SelectedTasksView.Refresh();
+                        _DBcontext.SaveChanges();
+                        EditedTaskContent = null;
+
+
+                    });
+                return _finishRenameTaskCommand;
+            }
+        }
         private bool _showOnlyInProgres;
         public bool ShowOnlyInProgres
         {
@@ -491,7 +554,8 @@ namespace ToDoList.ViewsModels
             SelectedTasksView.Filter = FilterTasks;
             SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
 
-
+            TextBlockSelectedTaskVisibility = Visibility.Visible;
+            TextBoxSelectedTaskVisibility = Visibility.Collapsed;
         }
 
 

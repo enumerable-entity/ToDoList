@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace ToDoList.Models
@@ -8,8 +9,16 @@ namespace ToDoList.Models
     {
         public int Id { get; set; }
 
-        public string Content { get; set; }
-
+        private string _content;
+        public string Content { get {
+                return _content;
+            }
+            set {
+                _content = value;
+                OnPropertyChanged();
+            } }
+        [NotMapped]
+        public bool IsInEditMode { get; set; }
         public DateTime? CompleteDate { get; set; }
         private bool _isCompleted;
         public bool IsCompleted

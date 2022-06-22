@@ -9,6 +9,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:local2="clr-namespace:ToDoList.Infrastructure"
+        xmlns:Command="http://www.galasoft.ch/mvvmlight"
+        xmlns:converter="clr-namespace:ToDoList.Infrastructure.Converters"
         d:DataContext="{d:DesignInstance Type=ViewModels:MainViewModel}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -25,7 +27,10 @@
         MinWidth="800"
         MinHeight="500"
         Name="MainWindowRoot">
-
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+        <converter:BoolToVisibilityConverterInverted x:Key="VisibleIfFalseConverter" />
+    </Window.Resources>
     <Grid x:Name="MainGrid"
           ShowGridLines="False">
 
@@ -351,6 +356,9 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+
+
+
                             <materialDesign:PackIcon  Kind="Calendar"
                                                       DockPanel.Dock="Right"
                                                       VerticalAlignment="Center"
@@ -376,7 +384,11 @@
                             <TextBlock TextWrapping="Wrap"
                                        VerticalAlignment="Center"
                                        FontSize="12"
-                                       Text="{Binding Content}">
+                                       Text="{Binding Content}"
+                                       Visibility="{Binding Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfFalseConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
@@ -392,6 +404,22 @@
 
                                 </TextBlock.Style>
                             </TextBlock>
+                            <TextBox TextWrapping="Wrap"
+                                     VerticalAlignment="Center"
+                                     FontSize="12"
+                                     Text="{Binding ElementName=MainWindowRoot, Path=DataContext.EditedTaskContent,UpdateSourceTrigger=PropertyChanged}"
+                                     materialDesign:HintAssist.Hint="{Binding Content}"
+                                     Visibility="{Binding    
+                                                            Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfTrueConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding ElementName=MainWindowRoot, Path=DataContext.FinishRenameTaskCommand}"
+                                                CommandParameter="{Binding ElementName=MainList, Path=SelectedItem}"
+                                                Key="Return" />
+                                </TextBox.InputBindings>
+                            </TextBox>
 
                         </DockPanel>
                     </materialDesign:Card>
@@ -421,35 +449,18 @@
                                                                   Margin="0" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <Separator></Separator>
-                                <MenuItem Width="auto"
-                                          Command="{Binding Source={StaticResource DataContextProxy}, Path=Data.RenameTaskCommand}">
-                                    <MenuItem.Header>
-                                        <WrapPanel  Orientation="Horizontal">
 
-
-                                            <TextBlock Text="Rename"
-                                                       FontSize="13pt"
-                                                       Margin="10,0,0,0"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center" />
-                                        </WrapPanel>
-                                    </MenuItem.Header>
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon  Kind="Rename"
-                                                                  Foreground="{StaticResource PrimaryHueMidBrush}"
-                                                                  VerticalAlignment="Center"
-                                                                  HorizontalAlignment="Center"
-                                                                  Height="15pt"
-                                                                  Width="15pt"
-                                                                  Margin="0" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
                             </ContextMenu>
                         </Setter.Value>
                     </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding RenameTaskCommand}"
+                                           CommandParameter="{Binding ElementName=MainList, Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </ListBox>
 
 
@@ -560,16 +571,16 @@
                    Grid.Column="0">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="Menu">
-                    <MenuItem Header="Cut">
+                    <MenuItem Header="Exit">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentCut" />
+                            <materialDesign:PackIcon Kind="ExitToApp" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="About">
-                    <MenuItem Header="Cut">
+                <MenuItem Header="Options">
+                    <MenuItem Header="About">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentCut" />
+                            <materialDesign:PackIcon Kind="About" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>

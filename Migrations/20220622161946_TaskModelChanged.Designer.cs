@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList;
 
@@ -10,9 +11,10 @@ using ToDoList;
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(ToDoListDBContext))]
-    partial class ToDoListDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220622161946_TaskModelChanged")]
+    partial class TaskModelChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -59,6 +61,9 @@ namespace ToDoList.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsInEditMode")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TaskListId")
                         .HasColumnType("INTEGER");
 
@@ -75,6 +80,7 @@ namespace ToDoList.Migrations
                             CompleteDate = new DateTime(2025, 11, 4, 4, 0, 0, 0, DateTimeKind.Unspecified),
                             Content = "This is a default task",
                             IsCompleted = false,
+                            IsInEditMode = false,
                             TaskListId = 1
                         });
                 });
