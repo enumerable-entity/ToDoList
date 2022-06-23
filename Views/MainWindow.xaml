@@ -502,8 +502,7 @@
                             <TextBox TextWrapping="Wrap"
                                      VerticalAlignment="Center"
                                      FontSize="12"
-                                     Text="{Binding ElementName=MainWindowRoot, Path=DataContext.EditedTaskContent,UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="{Binding Content}"
+                                     Text="{Binding ElementName=MainWindowRoot, Path=DataContext.EditedTaskContent,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                      Visibility="{Binding    
                                                             Path=IsInEditMode,
                                                             Converter={StaticResource VisibleIfTrueConverter},

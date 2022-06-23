@@ -463,12 +463,17 @@ namespace ToDoList.ViewsModels
         {
             get
             {
+                
                 if (_renameTaskCommand == null)
                     _renameTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
-                        var selectedTask = (Task)selectedItem;
-                        selectedTask.IsInEditMode = true;
-                        SelectedTasksView.Refresh();
+                        if (selectedItem != null)
+                        {
+                            var selectedTask = (Task)selectedItem;
+                            if(!SelectedTaskListItems.Any(tl=>tl.IsInEditMode==true))  selectedTask.IsInEditMode = true;
+                            EditedTaskContent = selectedTask.Content;
+                            SelectedTasksView.Refresh();
+                        }
                     });
                 return _renameTaskCommand;
             }
