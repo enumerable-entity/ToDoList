@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace ToDoList.Models
@@ -9,7 +9,8 @@ namespace ToDoList.Models
     {
         public int Id { get; set; }
         private string _title;
-        public string Title {
+        public string Title
+        {
             get { return _title; }
             set
             {
@@ -18,7 +19,12 @@ namespace ToDoList.Models
             }
         }
         public virtual ObservableCollection<TasksList> TaskLists { get; set; }
-
+        [NotMapped]
+        public bool IsInEditMode { get; set; }
+        [NotMapped]
+        public bool IsExpanded { get; set; }
+        [NotMapped]
+        public bool IsSelected { get; set; }
         public virtual User User { get; set; }
         public int UserId { get; set; }
 

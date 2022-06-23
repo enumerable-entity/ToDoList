@@ -64,13 +64,21 @@ namespace ToDoList.ViewsModels
         #region TaskLists
         private int _selectedTasksListId;
 
+        public object SelectedTreeViewItem { get; set; }
+
+
+
+
         private ICommand _selectedItemChangedCommand;
         public ICommand SelectedItemChangedCommand
         {
             get
             {
                 if (_selectedItemChangedCommand == null)
-                    _selectedItemChangedCommand = new RelayCommand<object>(selectedItem => SelectedTreeViewItemLoadTasks(selectedItem));
+                    _selectedItemChangedCommand = new RelayCommand<object>(selectedItem => { 
+                        SelectedTreeViewItemLoadTasks(selectedItem);
+                        SelectedTreeViewItem = selectedItem; 
+                    });
                 return _selectedItemChangedCommand;
             }
         }
@@ -92,6 +100,19 @@ namespace ToDoList.ViewsModels
             }
         }
 
+        private string _editedTasksListTitile;
+        public string EditedTasksListTitile
+        {
+            get
+            {
+                return _editedTasksListTitile;
+            }
+            set
+            {
+                _editedTasksListTitile = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         private ObservableCollection<Task> _selectetTaskListItems;
@@ -124,11 +145,69 @@ namespace ToDoList.ViewsModels
             }
         }
 
-
         public ICollectionView SelectedTasksView { get; }
 
 
 
+        private ICommand _renameTreeViewItemCommand;
+        public ICommand RenameTreeViewItemCommand
+        {
+            get
+            {
+                if (_renameTreeViewItemCommand == null)
+                    _renameTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
+                    {
+
+                        if(selectedItem is Category)
+                        {
+                            Category category = (Category)selectedItem;
+                            category.IsInEditMode = true;
+                        }
+                        else
+                        {
+                            TasksList taskList = (TasksList)selectedItem;
+                            taskList.IsInEditMode = true;
+                        }
+
+                        TreeViewCategoriesView.Refresh();
+                        
+                    });
+                return _renameTreeViewItemCommand;
+            }
+        }
+
+        private ICommand _finishRenameTreeViewItemCommand;
+        public ICommand FinishRenameTreeViewItemCommand
+        {
+            get
+            {
+                if (_finishRenameTreeViewItemCommand == null)
+                    _finishRenameTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
+                    {
+
+                        if (selectedItem is Category)
+                        {
+                            Category category = (Category)selectedItem;
+                            category.Title = EditedCategoryTitile;
+                            category.IsInEditMode = false;
+                            
+                            EditedCategoryTitile = null;
+                        }
+                        else
+                        {
+                            TasksList taskList = (TasksList)selectedItem;
+                            taskList.Title = EditedTasksListTitile;
+                            taskList.IsInEditMode = false;
+                            EditedTasksListTitile = null;
+                            
+                        }
+                        _DBcontext.SaveChanges();
+                        TreeViewCategoriesView.Refresh();
+                        
+                    });
+                return _finishRenameTreeViewItemCommand;
+            }
+        }
 
         private string _newTaskListTitle;
         public string NewTaskListTitle
@@ -144,11 +223,30 @@ namespace ToDoList.ViewsModels
         public ICommand AddNewTaskListCommand { get; }
         private void OnAddNewTaskListCommandExecuted(object sender)
         {
-            TasksList newTaskList = new TasksList()
+            TasksList newTaskList;
+
+            if (SelectedTreeViewItem is Category)
             {
-                Title = NewTaskListTitle,
-                Category = _defaultCategory
-            };
+                newTaskList = new TasksList()
+                {
+                    Title = NewTaskListTitle,
+                    Category = (Category)SelectedTreeViewItem
+                };
+            }
+            else if (SelectedTreeViewItem is TasksList) {
+                newTaskList = new TasksList()
+                {
+                    Title = NewTaskListTitle,
+                    Category = ((TasksList)SelectedTreeViewItem).Category
+                };
+            }else
+            {
+                newTaskList = new TasksList()
+                {
+                    Title = NewTaskListTitle,
+                    Category = _defaultCategory
+                };
+            }
 
             _DBcontext.TasksLists.Add(newTaskList);
             _DBcontext.SaveChanges();
@@ -159,23 +257,32 @@ namespace ToDoList.ViewsModels
             return string.IsNullOrEmpty(NewTaskListTitle) ? false : true;
         }
 
-        private ICommand _deleteTaskListCommand;
-        public ICommand DeleteTaskListCommand
+        private ICommand _deleteTreeViewItemCommand;
+        public ICommand DeleteTreeViewItemCommand
         {
             get
             {
-                if (_deleteTaskListCommand == null)
-                    _deleteTaskListCommand = new RelayCommand<Task>(selectedItem =>
+                if (_deleteTreeViewItemCommand == null)
+                    _deleteTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
                     {
-                        var taskListToDelete = _DBcontext.TasksLists.FirstOrDefault(tl => tl.Id == _selectedTasksListId);
-                        _DBcontext.TasksLists.Remove(taskListToDelete);
+
+                        if(SelectedTreeViewItem is Category)
+                        {
+                            _DBcontext.Categories.Remove((Category)SelectedTreeViewItem);
+                            TreeViewCategories.Remove((Category)SelectedTreeViewItem);
+                        }
+                        else
+                        {
+                            _DBcontext.TasksLists.Remove((TasksList)SelectedTreeViewItem);
+
+                        }
+                        
                         _DBcontext.SaveChanges();
-                        Category category = TreeViewCategories.FirstOrDefault(cat => cat.Id == taskListToDelete.CategoryId);
-                        category.TaskLists.Remove(taskListToDelete);
-
-
+                        SelectedTaskListItems.Clear();
+                        TreeViewCategoriesView.Refresh();
+                        SelectedTasksView.Refresh();
                     });
-                return _deleteTaskCommand;
+                return _deleteTreeViewItemCommand;
             }
         }
         #endregion
@@ -183,6 +290,19 @@ namespace ToDoList.ViewsModels
         #region Categories
         private Category _defaultCategory;
         private string _newCategoryTitile;
+        private string _editedCategoryTitile;
+        public string EditedCategoryTitile
+        {
+            get
+            {
+                return _editedCategoryTitile;
+            }
+            set
+            {
+                _editedCategoryTitile = value;
+                OnPropertyChanged();
+            }
+        }
         public string NewCategoryTitle
         {
             get { return _newCategoryTitile; }
@@ -203,25 +323,12 @@ namespace ToDoList.ViewsModels
             }
             set
             {
-                //if (_categories != null)
-                //{
-                //    foreach (var item in _categories)
-                //    {
-                //        item.PropertyChanged -= PropertyChanged;
-                //    }
-                //}
-
-                //if (value != null)
-                //{
-                //    foreach (var item in value)
-                //    {
-                //        item.PropertyChanged += PropertyChanged;
-                //    }
-                //}
                 _categories = value;
                 OnPropertyChanged();
             }
         }
+
+        public ICollectionView TreeViewCategoriesView { get; }
 
         private void OnAddNewCategoryCommandExecuted(object sender)
         {
@@ -246,35 +353,6 @@ namespace ToDoList.ViewsModels
 
         #region Tasks
 
-        private Visibility _textBlockSelectedTaskVisibility;
-        private Visibility _textBoxSelectedTaskVisibility;
-
-        public Visibility TextBlockSelectedTaskVisibility
-        {
-            get
-            {
-                return _textBlockSelectedTaskVisibility;
-            }
-            set
-            {
-                _textBlockSelectedTaskVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility TextBoxSelectedTaskVisibility
-        {
-            get
-            {
-                return _textBoxSelectedTaskVisibility;
-            }
-            set
-            {
-                _textBoxSelectedTaskVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-
         private string _newTaskContent;
         public string NewTaskContent
         {
@@ -285,6 +363,16 @@ namespace ToDoList.ViewsModels
             set
             {
                 _newTaskContent = value;
+                OnPropertyChanged();
+            }
+        }
+        private DateTime? _newTaskDate;
+        public DateTime? NewTaskDate 
+        {
+            get { return _newTaskDate; }
+            set
+            {
+                _newTaskDate = value;
                 OnPropertyChanged();
             }
         }
@@ -332,9 +420,9 @@ namespace ToDoList.ViewsModels
                 Content = NewTaskContent,
                 IsCompleted = false,
                 TaskListId = _selectedTasksListId,
-                CompleteDate = DateTime.Now
+                CompleteDate = NewTaskDate
             };
-
+            NewTaskDate = null;
             _DBcontext.Tasks.Add(newTask);
             _DBcontext.SaveChanges();
             SelectedTaskListItems.Add(newTask);
@@ -343,7 +431,7 @@ namespace ToDoList.ViewsModels
         }
         private bool CanAddNewTaskCommandExecute(object sender)
         {
-            return string.IsNullOrEmpty(NewTaskContent) ? false : true;
+            return string.IsNullOrEmpty(NewTaskContent) || _selectedTasksListId==2 ? false : true;
         }
         private void OnChangeTaskStatusCommand(object sender)
         {
@@ -516,7 +604,7 @@ namespace ToDoList.ViewsModels
         {
             _selectedTasksListId = 2;
             SelectedTaskListItems.Clear();
-            var load = _DBcontext.Tasks.Where(t => t.TaskListId == _selectedTasksListId).ToList();
+            var load = _DBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList();
 
             foreach (var task in load)
             {
@@ -537,7 +625,7 @@ namespace ToDoList.ViewsModels
             UserSettings = dBcontext.UserSettings.First<UserSettings>(us => us.User == AuthenticatedUser);
             IsDarkModeEnabled = UserSettings.DarkMode;
             _selectedTasksListId = 2;
-            SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.TaskListId == 2).ToList());
+            SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList());
 
             TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == AuthenticatedUser.Id).ToList());
             AddNewCategoryCommand = new LambdaCommand(OnAddNewCategoryCommandExecuted, CanAddNewCategoryCommandExecute);
@@ -546,16 +634,14 @@ namespace ToDoList.ViewsModels
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
 
 
-
-
             WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
 
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;
             SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
+            TreeViewCategoriesView = CollectionViewSource.GetDefaultView(TreeViewCategories);
 
-            TextBlockSelectedTaskVisibility = Visibility.Visible;
-            TextBoxSelectedTaskVisibility = Visibility.Collapsed;
+
         }
 
 

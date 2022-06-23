@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace ToDoList.Models
@@ -9,7 +10,10 @@ namespace ToDoList.Models
         public int Id { get; set; }
 
         public string Title { get; set; }
-
+        [NotMapped]
+        public bool IsInEditMode { get; set; }
+        [NotMapped]
+        public bool IsSelected { get; set; }
         public virtual IList<Task> Tasks { get; set; }
 
         public virtual Category? Category { get; set; }

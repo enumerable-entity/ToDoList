@@ -9,7 +9,6 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:local2="clr-namespace:ToDoList.Infrastructure"
-        xmlns:Command="http://www.galasoft.ch/mvvmlight"
         xmlns:converter="clr-namespace:ToDoList.Infrastructure.Converters"
         d:DataContext="{d:DesignInstance Type=ViewModels:MainViewModel}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -116,15 +115,15 @@
             </DockPanel>
         </materialDesign:Card>
 
-        <TreeView   Grid.Column="0"
-                    Grid.Row="2"
-                    Name="treeView"
-                    ItemsSource="{Binding TreeViewCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    AllowDrop="True"
-                    MinWidth="220"
-                    Margin="0,10pt,0,0"
-                    dd:DragDrop.IsDragSource="True"
-                    dd:DragDrop.IsDropTarget="True">
+        <TreeView Grid.Column="0"
+                  Grid.Row="2"
+                  Name="treeView"
+                  ItemsSource="{Binding TreeViewCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  AllowDrop="True"
+                  MinWidth="220"
+                  Margin="0,10pt,0,0"
+                  dd:DragDrop.IsDragSource="True"
+                  dd:DragDrop.IsDropTarget="True">
             <TreeView.Resources>
                 <Style  TargetType="TreeViewItem"
                         BasedOn="{StaticResource MaterialDesignTreeViewItem}">
@@ -141,11 +140,17 @@
                     <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}"
                                            CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}" />
                 </i:EventTrigger>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding RenameTreeViewItemCommand}"
+                                           CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}" />
+                </i:EventTrigger>
+
             </i:Interaction.Triggers>
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Width="auto"
-                              Command="{Binding Source={StaticResource DataContextProxyy}, Path=Data.DeleteTaskListCommand}">
+                              Command="{Binding Source={StaticResource DataContextProxyy}, Path=Data.DeleteTreeViewItemCommand}">
+
                         <MenuItem.Header>
                             <TextBlock Text="Delete"
                                        FontSize="13pt"
@@ -163,29 +168,6 @@
                                                       Margin="0" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator></Separator>
-                    <MenuItem Width="auto">
-                        <MenuItem.Header>
-                            <WrapPanel  Orientation="Horizontal">
-
-
-                                <TextBlock Text="Rename"
-                                           FontSize="13pt"
-                                           Margin="10,0,0,0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
-                            </WrapPanel>
-                        </MenuItem.Header>
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon  Kind="Rename"
-                                                      Foreground="{StaticResource PrimaryHueMidBrush}"
-                                                      VerticalAlignment="Center"
-                                                      HorizontalAlignment="Center"
-                                                      Height="15pt"
-                                                      Width="15pt"
-                                                      Margin="0" />
-                        </MenuItem.Icon>
-                    </MenuItem>
                 </ContextMenu>
 
             </TreeView.ContextMenu>
@@ -193,7 +175,9 @@
                 <HierarchicalDataTemplate ItemsSource="{Binding TaskLists,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate>
+
                             <WrapPanel Orientation="Horizontal">
+
                                 <materialDesign:PackIcon  Foreground="{StaticResource PrimaryHueMidBrush}"
                                                           Kind="ClipboardListOutline"
                                                           VerticalAlignment="Center"
@@ -206,7 +190,28 @@
                                            FontSize="11pt"
                                            Margin="5,0,0,0"
                                            VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
+                                           HorizontalAlignment="Center"
+                                           Visibility="{Binding Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfFalseConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}">
+
+                                </TextBlock>
+                                <TextBox Text="{Binding ElementName=MainWindowRoot, 
+                                                        Path=DataContext.EditedTasksListTitile,
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="{Binding Title}"
+                                         Visibility="{Binding    
+                                                            Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfTrueConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Command="{Binding ElementName=MainWindowRoot, Path=DataContext.FinishRenameTreeViewItemCommand}"
+                                                    CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"
+                                                    Key="Return" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
                             </WrapPanel>
 
                         </HierarchicalDataTemplate>
@@ -224,11 +229,71 @@
                                    FontSize="13pt"
                                    Margin="5,0,0,0"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Center" />
+                                   HorizontalAlignment="Center"
+                                   Visibility="{Binding Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfFalseConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}" />
+                        <TextBox Text="{Binding ElementName=MainWindowRoot, 
+                                                        Path=DataContext.EditedCategoryTitile,
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="{Binding Title}"
+                                 Visibility="{Binding    Path=IsInEditMode,
+                                                            Converter={StaticResource VisibleIfTrueConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=TwoWay}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Command="{Binding ElementName=MainWindowRoot, Path=DataContext.FinishRenameTreeViewItemCommand}"
+                                            CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"
+                                            Key="Return" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+
                     </WrapPanel>
 
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}"
+                       BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Left" />
+                    <Setter Property="materialDesign:TreeViewAssist.ExpanderSize"
+                            Value="30" />
+                    <Setter Property="materialDesign:TreeViewAssist.ShowSelection"
+                            Value="True" />
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Width="auto"
+                                          Command="{Binding Source={StaticResource DataContextProxyy}, Path=Data.DeleteTreeViewItemCommand}">
+                                    <MenuItem.Header>
+                                        <TextBlock Text="Delete"
+                                                   FontSize="13pt"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" />
+                                    </MenuItem.Header>
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon  Kind="Trash"
+                                                                  Foreground="{StaticResource PrimaryHueMidBrush}"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Center"
+                                                                  Height="15pt"
+                                                                  Width="15pt"
+                                                                  Margin="0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="IsExpanded"
+                            Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected"
+                            Value="{Binding IsSelected, Mode=TwoWay}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
         </TreeView>
         <!-- ====================================================================================================================-->
 
@@ -376,6 +441,11 @@
                                                 <Setter Property="Foreground"
                                                         Value="Gray" />
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding CompleteDate}"
+                                                         Value="{x:Null}">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </materialDesign:PackIcon.Style>
@@ -487,6 +557,13 @@
                         FlowDirection="LeftToRight"
                         Margin="0,0,10pt,0"
                         Width="60pt" />
+                <DatePicker Width="80pt"
+                            Margin="0pt,0pt,8pt,7pt"
+                            SelectedDate="{Binding NewTaskDate, UpdateSourceTrigger=PropertyChanged}"
+                            DockPanel.Dock="Right"
+                            materialDesign:HintAssist.Hint="Pick Date"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
                 <TextBox x:Name="new_task_text_box"
                          Text="{Binding NewTaskContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="What you want to do? "
@@ -530,6 +607,7 @@
                                                   Width="15pt" />
                     </Button.Content>
                 </Button>
+
                 <TextBox Text="{Binding NewCategoryTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="New category"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
