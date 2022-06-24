@@ -34,6 +34,7 @@ namespace ToDoList
             services.AddDbContext<ToDoListDBContext>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();
+            services.AddScoped<AboutWindow>();
         }
         /// <summary>
         /// Metoda uruchamiana jendorazowa przy uruchamianiu aplikacji.
