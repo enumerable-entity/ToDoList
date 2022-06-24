@@ -66,6 +66,9 @@ namespace ToDoList.ViewsModels
             }
         }
 
+        /// <summary>
+        /// Okno informacji o programie
+        /// </summary>
         public Window AboutWindow { get; set; }
 
         private ICommand _openAboutWindow;
