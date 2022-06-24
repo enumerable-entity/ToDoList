@@ -1,7 +1,10 @@
 ﻿using System.Windows;
-
+/// Klasy wykonujące wspomagające funkcje
 namespace ToDoList.Infrastructure
 {
+    /// <summary>
+    /// Klasa wykonująca forwarding DataContext'u dla menu kontekstowego
+    /// </summary>
     public class ContextMenuDataContextProxy : Freezable
     {
         protected override Freezable CreateInstanceCore()

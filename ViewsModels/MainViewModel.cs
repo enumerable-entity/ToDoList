@@ -12,8 +12,12 @@ using System.Windows.Input;
 using ToDoList.Models;
 using ToDoList.ViewsModels.Commands;
 
+/// ViewModele aplikacji, według wzorca MVVM
 namespace ToDoList.ViewsModels
 {
+    /// <summary>
+    /// ViewModel widoku MainWindow według wzorca MVVM
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -93,7 +97,7 @@ namespace ToDoList.ViewsModels
             {
                 return _spliterPosition;
             }
-            set 
+            set
             {
                 _spliterPosition = value;
                 UserSettings.GridSplitterPosition = (int)SpliterPosition.Value;

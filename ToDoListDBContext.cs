@@ -4,23 +4,57 @@ using ToDoList.Models;
 
 namespace ToDoList
 {
+    /// <summary>
+    /// Klasa reprezentująca kontekst bazy danych.
+    /// ORM maping jest realizowany za pomocą EntityFramework
+    /// </summary>
     public class ToDoListDBContext : DbContext
     {
+        /// <summary>
+        /// Zbór, reprezentujący encje zadań w bazie danych
+        /// </summary>
         public DbSet<Task> Tasks { get; set; }
+        /// <summary>
+        /// Zbór, reprezentujący encje kategorii w bazie danych
+        /// </summary>
         public DbSet<Category> Categories { get; set; }
+        /// <summary>
+        /// Zbór, reprezentujący encje listów zadań w bazie danych
+        /// </summary>
         public DbSet<TasksList> TasksLists { get; set; }
+        /// <summary>
+        /// Zbór, reprezentujący encje użytkowików w bazie danych
+        /// </summary>
         public DbSet<User> Users { get; set; }
+        /// <summary>
+        /// Zbór, reprezentujący encje ustawień użytkowników w bazie danych
+        /// </summary>
         public DbSet<UserSettings> UserSettings { get; set; }
+        /// <summary>
+        /// Miesce lokalizowania bazy danych aplikacji
+        /// </summary>
         public string DbPath { get; }
 
+        /// <summary>
+        /// Konstruktor klasy DB contekstu.
+        /// Inicjalizowane jest miejsce przechowywania bazy danych
+        /// </summary>
         public ToDoListDBContext()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
             DbPath = System.IO.Path.Join(path, "todolist.db");
         }
+
+        /// <summary>
+        /// Metoda inicjalizująca używanie jako servera bazy danych - biblioteki SQLite
+        /// </summary>
+        /// <param name="options"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder options)
                                 => options.UseSqlite($"Data Source={DbPath}");
+        /// <summary>
+        /// Mapowanie encji aplikacji na bazę danych
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
