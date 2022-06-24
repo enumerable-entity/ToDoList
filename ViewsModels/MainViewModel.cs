@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDoList.Models;
@@ -26,7 +25,7 @@ namespace ToDoList.ViewsModels
 
         private readonly ToDoListDBContext _DBcontext;
         private User AuthenticatedUser;
-        private UserSettings UserSettings { get; set; }
+        public UserSettings UserSettings { get; set; }
 
         #region Settings
         private bool _isDarkModeEanbled;
@@ -42,7 +41,7 @@ namespace ToDoList.ViewsModels
             }
         }
 
-        public void SwitchTheme()
+        private void SwitchTheme()
         {
             PaletteHelper paletteHelper = new PaletteHelper();
             ITheme theme = paletteHelper.GetTheme();
@@ -57,8 +56,52 @@ namespace ToDoList.ViewsModels
             paletteHelper.SetTheme(theme);
         }
 
+        private int _windowWidth;
+        public int WindowWidth
+        {
+            get
+            {
+                return _windowWidth;
+            }
+            set
+            {
+                _windowWidth = value;
+                UserSettings.WindowWidth = _windowWidth;
+                _DBcontext.SaveChanges();
+            }
+        }
+        private int _windowHeight;
+        public int WindowHeight
+        {
+            get
+            {
+                return _windowHeight;
+            }
+            set
+            {
+                _windowHeight = value;
+                UserSettings.WindowHeight = _windowHeight;
+                _DBcontext.SaveChanges();
+            }
+        }
 
-        public int WindowWidth { get; set; }
+
+        public GridLength _spliterPosition;
+        public GridLength SpliterPosition
+        {
+            get
+            {
+                return _spliterPosition;
+            }
+            set 
+            {
+                _spliterPosition = value;
+                UserSettings.GridSplitterPosition = (int)SpliterPosition.Value;
+                _DBcontext.SaveChanges();
+
+            }
+        }
+
         #endregion
 
         #region TaskLists
@@ -75,9 +118,10 @@ namespace ToDoList.ViewsModels
             get
             {
                 if (_selectedItemChangedCommand == null)
-                    _selectedItemChangedCommand = new RelayCommand<object>(selectedItem => { 
+                    _selectedItemChangedCommand = new RelayCommand<object>(selectedItem =>
+                    {
                         SelectedTreeViewItemLoadTasks(selectedItem);
-                        SelectedTreeViewItem = selectedItem; 
+                        SelectedTreeViewItem = selectedItem;
                     });
                 return _selectedItemChangedCommand;
             }
@@ -158,7 +202,7 @@ namespace ToDoList.ViewsModels
                     _renameTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
                     {
 
-                        if(selectedItem is Category)
+                        if (selectedItem is Category)
                         {
                             Category category = (Category)selectedItem;
                             category.IsInEditMode = true;
@@ -170,7 +214,7 @@ namespace ToDoList.ViewsModels
                         }
 
                         TreeViewCategoriesView.Refresh();
-                        
+
                     });
                 return _renameTreeViewItemCommand;
             }
@@ -190,7 +234,7 @@ namespace ToDoList.ViewsModels
                             Category category = (Category)selectedItem;
                             category.Title = EditedCategoryTitile;
                             category.IsInEditMode = false;
-                            
+
                             EditedCategoryTitile = null;
                         }
                         else
@@ -199,11 +243,11 @@ namespace ToDoList.ViewsModels
                             taskList.Title = EditedTasksListTitile;
                             taskList.IsInEditMode = false;
                             EditedTasksListTitile = null;
-                            
+
                         }
                         _DBcontext.SaveChanges();
                         TreeViewCategoriesView.Refresh();
-                        
+
                     });
                 return _finishRenameTreeViewItemCommand;
             }
@@ -233,13 +277,15 @@ namespace ToDoList.ViewsModels
                     Category = (Category)SelectedTreeViewItem
                 };
             }
-            else if (SelectedTreeViewItem is TasksList) {
+            else if (SelectedTreeViewItem is TasksList)
+            {
                 newTaskList = new TasksList()
                 {
                     Title = NewTaskListTitle,
                     Category = ((TasksList)SelectedTreeViewItem).Category
                 };
-            }else
+            }
+            else
             {
                 newTaskList = new TasksList()
                 {
@@ -251,6 +297,7 @@ namespace ToDoList.ViewsModels
             _DBcontext.TasksLists.Add(newTaskList);
             _DBcontext.SaveChanges();
             NewTaskListTitle = string.Empty;
+            TreeViewCategoriesView.Refresh();
         }
         private bool CanAddNewTaskListCommandExecute(object sender)
         {
@@ -266,7 +313,7 @@ namespace ToDoList.ViewsModels
                     _deleteTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
                     {
 
-                        if(SelectedTreeViewItem is Category)
+                        if (SelectedTreeViewItem is Category)
                         {
                             _DBcontext.Categories.Remove((Category)SelectedTreeViewItem);
                             TreeViewCategories.Remove((Category)SelectedTreeViewItem);
@@ -276,7 +323,7 @@ namespace ToDoList.ViewsModels
                             _DBcontext.TasksLists.Remove((TasksList)SelectedTreeViewItem);
 
                         }
-                        
+
                         _DBcontext.SaveChanges();
                         SelectedTaskListItems.Clear();
                         TreeViewCategoriesView.Refresh();
@@ -367,7 +414,7 @@ namespace ToDoList.ViewsModels
             }
         }
         private DateTime? _newTaskDate;
-        public DateTime? NewTaskDate 
+        public DateTime? NewTaskDate
         {
             get { return _newTaskDate; }
             set
@@ -431,7 +478,7 @@ namespace ToDoList.ViewsModels
         }
         private bool CanAddNewTaskCommandExecute(object sender)
         {
-            return string.IsNullOrEmpty(NewTaskContent) || _selectedTasksListId==2 ? false : true;
+            return string.IsNullOrEmpty(NewTaskContent) || _selectedTasksListId == 2 ? false : true;
         }
         private void OnChangeTaskStatusCommand(object sender)
         {
@@ -463,14 +510,14 @@ namespace ToDoList.ViewsModels
         {
             get
             {
-                
+
                 if (_renameTaskCommand == null)
                     _renameTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
                         if (selectedItem != null)
                         {
                             var selectedTask = (Task)selectedItem;
-                            if(!SelectedTaskListItems.Any(tl=>tl.IsInEditMode==true))  selectedTask.IsInEditMode = true;
+                            if (!SelectedTaskListItems.Any(tl => tl.IsInEditMode == true)) selectedTask.IsInEditMode = true;
                             EditedTaskContent = selectedTask.Content;
                             SelectedTasksView.Refresh();
                         }
@@ -622,13 +669,17 @@ namespace ToDoList.ViewsModels
         public MainViewModel(ToDoListDBContext dBcontext)
         {
             _DBcontext = dBcontext;
-
             dBcontext.Database.Migrate();
+
             _defaultCategory = dBcontext.Categories.First(c => c.Id == 1);
             AuthenticatedUser = dBcontext.Users.First<User>(u => u.IsAuthenticated == true);
 
             UserSettings = dBcontext.UserSettings.First<UserSettings>(us => us.User == AuthenticatedUser);
             IsDarkModeEnabled = UserSettings.DarkMode;
+            WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
+            WindowHeight = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowHeight;
+            SpliterPosition = new GridLength(_DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).GridSplitterPosition);
+
             _selectedTasksListId = 2;
             SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList());
 
@@ -639,7 +690,7 @@ namespace ToDoList.ViewsModels
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
 
 
-            WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
+
 
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;

@@ -21,8 +21,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Toddy"
-        Height="900"
         Width="{Binding WindowWidth, Mode=TwoWay}"
+        Height="{Binding WindowHeight, Mode=TwoWay}"
         MinWidth="800"
         MinHeight="500"
         Name="MainWindowRoot">
@@ -42,7 +42,7 @@
             <RowDefinition Height="50pt" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"
+            <ColumnDefinition Width="{Binding SpliterPosition, Mode=TwoWay, UpdateSourceTrigger=Default}"
                               MinWidth="150pt"
                               MaxWidth="250pt" />
             <ColumnDefinition Width="auto" />
