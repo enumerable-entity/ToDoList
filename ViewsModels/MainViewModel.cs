@@ -10,25 +10,87 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDoList.Models;
+using ToDoList.Views;
 using ToDoList.ViewsModels.Commands;
 
+/// ViewModele aplikacji, według wzorca MVVM
 namespace ToDoList.ViewsModels
 {
+    /// <summary>
+    /// ViewModel widoku MainWindow według wzorca MVVM
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
+
+        /// <summary>
+        /// Wydarzenie zmiany stanu ViewModel'u
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Metoda wywołująca wydarzenie o zmianie stanu ViewModel'u
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private readonly ToDoListDBContext _DBcontext;
-        private User AuthenticatedUser;
+        /// <summary>
+        /// 
+        /// </summary>
+        private ToDoListDBContext DBcontext { get; set; }
+
+        /// <summary>
+        /// Zalogowany użytkownik
+        /// </summary>
+        private User AuthenticatedUser { get; set; }
+
+        /// <summary>
+        /// Ustawienia zalogowanego użytkownika
+        /// </summary>
         public UserSettings UserSettings { get; set; }
 
+        private ICommand _closeAppCommand;
+        /// <summary>
+        /// Komenda zamykania aplikacji
+        /// </summary>
+        public ICommand CloseAppCommand
+        {
+            get
+            {
+                if (_closeAppCommand == null)
+                    _closeAppCommand = new RelayCommand<Task>(selectedItem => Application.Current.Shutdown());
+                return _closeAppCommand;
+            }
+        }
+
+        /// <summary>
+        /// Okno informacji o programie
+        /// </summary>
+        public Window AboutWindow { get; set; }
+
+        private ICommand _openAboutWindow;
+        /// <summary>
+        /// Komenda pokazująca okno About
+        /// </summary>
+        public ICommand OpenAboutWindow
+        {
+            get
+            {
+                if (_openAboutWindow == null)
+                    _openAboutWindow = new RelayCommand<Task>(selectedItem => AboutWindow.Show());
+                return _openAboutWindow;
+            }
+        }
+
         #region Settings
+
         private bool _isDarkModeEanbled;
+        /// <summary>
+        /// Property dla bindingu stylu programu
+        /// </summary>
         public bool IsDarkModeEnabled
         {
             get { return _isDarkModeEanbled; }
@@ -37,10 +99,12 @@ namespace ToDoList.ViewsModels
                 _isDarkModeEanbled = value;
                 SwitchTheme();
                 UserSettings.DarkMode = IsDarkModeEnabled;
-                _DBcontext.SaveChanges();
+                DBcontext.SaveChanges();
             }
         }
-
+        /// <summary>
+        /// Metoda zminiająca kolor programu
+        /// </summary>
         private void SwitchTheme()
         {
             PaletteHelper paletteHelper = new PaletteHelper();
@@ -57,6 +121,10 @@ namespace ToDoList.ViewsModels
         }
 
         private int _windowWidth;
+
+        /// <summary>
+        /// Szerokość głównego okna
+        /// </summary>
         public int WindowWidth
         {
             get
@@ -67,10 +135,15 @@ namespace ToDoList.ViewsModels
             {
                 _windowWidth = value;
                 UserSettings.WindowWidth = _windowWidth;
-                _DBcontext.SaveChanges();
+                DBcontext.SaveChanges();
             }
         }
+
         private int _windowHeight;
+
+        /// <summary>
+        /// Wysokość głównego okna
+        /// </summary>
         public int WindowHeight
         {
             get
@@ -81,36 +154,41 @@ namespace ToDoList.ViewsModels
             {
                 _windowHeight = value;
                 UserSettings.WindowHeight = _windowHeight;
-                _DBcontext.SaveChanges();
+                DBcontext.SaveChanges();
             }
         }
 
 
-        public GridLength _spliterPosition;
+        private GridLength _spliterPosition;
+        /// <summary>
+        /// Położenie rozdzielacza
+        /// </summary>
         public GridLength SpliterPosition
         {
             get
             {
                 return _spliterPosition;
             }
-            set 
+            set
             {
                 _spliterPosition = value;
                 UserSettings.GridSplitterPosition = (int)SpliterPosition.Value;
-                _DBcontext.SaveChanges();
-
+                DBcontext.SaveChanges();
             }
         }
 
         #endregion
 
         #region TaskLists
+
+        /// <summary>
+        /// Identyfikator wybranej listy zadań
+        /// </summary>
         private int _selectedTasksListId;
-
+        /// <summary>
+        /// Wybrany element na TreeView
+        /// </summary>
         public object SelectedTreeViewItem { get; set; }
-
-
-
 
         private ICommand _selectedItemChangedCommand;
         public ICommand SelectedItemChangedCommand
@@ -126,7 +204,10 @@ namespace ToDoList.ViewsModels
                 return _selectedItemChangedCommand;
             }
         }
-
+        /// <summary>
+        /// Pobira zadania dla wybranej listy zadań
+        /// </summary>
+        /// <param name="selectedItem">Lista zadań, dla której należy pobrać zadania</param>
         private void SelectedTreeViewItemLoadTasks(object selectedItem)
         {
             var taskListId = (selectedItem as TasksList)?.Id;
@@ -134,7 +215,7 @@ namespace ToDoList.ViewsModels
             {
                 _selectedTasksListId = (int)taskListId;
                 SelectedTaskListItems.Clear();
-                var load = _DBcontext.Tasks.Where(t => t.TaskListId == _selectedTasksListId).ToList();
+                var load = DBcontext.Tasks.Where(t => t.TaskListId == _selectedTasksListId).ToList();
 
                 foreach (var task in load)
                 {
@@ -145,6 +226,9 @@ namespace ToDoList.ViewsModels
         }
 
         private string _editedTasksListTitile;
+        /// <summary>
+        /// Nowa nazwa listy zadań
+        /// </summary>
         public string EditedTasksListTitile
         {
             get
@@ -158,8 +242,10 @@ namespace ToDoList.ViewsModels
             }
         }
 
-
         private ObservableCollection<Task> _selectetTaskListItems;
+        /// <summary>
+        /// Zadania dla wybranej listy zadań
+        /// </summary>
         public ObservableCollection<Task> SelectedTaskListItems
         {
             get
@@ -168,7 +254,6 @@ namespace ToDoList.ViewsModels
             }
             set
             {
-
                 if (_selectetTaskListItems != null)
                 {
                     foreach (var item in _selectetTaskListItems)
@@ -189,11 +274,11 @@ namespace ToDoList.ViewsModels
             }
         }
 
-        public ICollectionView SelectedTasksView { get; }
-
-
-
         private ICommand _renameTreeViewItemCommand;
+
+        /// <summary>
+        /// Komenda edytowania kategorii lub listy zadań
+        /// </summary>
         public ICommand RenameTreeViewItemCommand
         {
             get
@@ -221,6 +306,10 @@ namespace ToDoList.ViewsModels
         }
 
         private ICommand _finishRenameTreeViewItemCommand;
+
+        /// <summary>
+        /// Komenda akceptująca edytowanie kategorii lub listy zadań
+        /// </summary>
         public ICommand FinishRenameTreeViewItemCommand
         {
             get
@@ -228,7 +317,6 @@ namespace ToDoList.ViewsModels
                 if (_finishRenameTreeViewItemCommand == null)
                     _finishRenameTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
                     {
-
                         if (selectedItem is Category)
                         {
                             Category category = (Category)selectedItem;
@@ -245,15 +333,18 @@ namespace ToDoList.ViewsModels
                             EditedTasksListTitile = null;
 
                         }
-                        _DBcontext.SaveChanges();
+                        DBcontext.SaveChanges();
                         TreeViewCategoriesView.Refresh();
-
                     });
                 return _finishRenameTreeViewItemCommand;
             }
         }
 
         private string _newTaskListTitle;
+
+        /// <summary>
+        /// Nowa nazwa listy zadań
+        /// </summary>
         public string NewTaskListTitle
         {
             get { return _newTaskListTitle; }
@@ -264,7 +355,10 @@ namespace ToDoList.ViewsModels
             }
         }
 
-        public ICommand AddNewTaskListCommand { get; }
+        /// <summary>
+        /// Komenda dodawania nowej listy zadań
+        /// </summary>
+        public ICommand AddNewTaskListCommand { get; set; }
         private void OnAddNewTaskListCommandExecuted(object sender)
         {
             TasksList newTaskList;
@@ -294,8 +388,8 @@ namespace ToDoList.ViewsModels
                 };
             }
 
-            _DBcontext.TasksLists.Add(newTaskList);
-            _DBcontext.SaveChanges();
+            DBcontext.TasksLists.Add(newTaskList);
+            DBcontext.SaveChanges();
             NewTaskListTitle = string.Empty;
             TreeViewCategoriesView.Refresh();
         }
@@ -305,6 +399,10 @@ namespace ToDoList.ViewsModels
         }
 
         private ICommand _deleteTreeViewItemCommand;
+
+        /// <summary>
+        /// Komenda usuwania kategorii lub listy zadań
+        /// </summary>
         public ICommand DeleteTreeViewItemCommand
         {
             get
@@ -312,19 +410,18 @@ namespace ToDoList.ViewsModels
                 if (_deleteTreeViewItemCommand == null)
                     _deleteTreeViewItemCommand = new RelayCommand<object>(selectedItem =>
                     {
-
                         if (SelectedTreeViewItem is Category)
                         {
-                            _DBcontext.Categories.Remove((Category)SelectedTreeViewItem);
+                            DBcontext.Categories.Remove((Category)SelectedTreeViewItem);
                             TreeViewCategories.Remove((Category)SelectedTreeViewItem);
                         }
                         else
                         {
-                            _DBcontext.TasksLists.Remove((TasksList)SelectedTreeViewItem);
+                            DBcontext.TasksLists.Remove((TasksList)SelectedTreeViewItem);
 
                         }
 
-                        _DBcontext.SaveChanges();
+                        DBcontext.SaveChanges();
                         SelectedTaskListItems.Clear();
                         TreeViewCategoriesView.Refresh();
                         SelectedTasksView.Refresh();
@@ -332,12 +429,21 @@ namespace ToDoList.ViewsModels
                 return _deleteTreeViewItemCommand;
             }
         }
+
         #endregion
 
         #region Categories
+
+        /// <summary>
+        /// Domyślna kategoria dla listów zadań
+        /// </summary>
         private Category _defaultCategory;
-        private string _newCategoryTitile;
+
         private string _editedCategoryTitile;
+
+        /// <summary>
+        /// Nowa nazwa edytowanej kategorii
+        /// </summary>
         public string EditedCategoryTitile
         {
             get
@@ -350,6 +456,12 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
+
+        private string _newCategoryTitile;
+
+        /// <summary>
+        /// Nazwa nowej kategorii
+        /// </summary>
         public string NewCategoryTitle
         {
             get { return _newCategoryTitile; }
@@ -359,9 +471,11 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
-        public ICommand AddNewCategoryCommand { get; }
 
         private ObservableCollection<Category> _categories;
+        /// <summary>
+        /// Kategorie danego użytkownika
+        /// </summary>
         public ObservableCollection<Category> TreeViewCategories
         {
             get
@@ -375,8 +489,15 @@ namespace ToDoList.ViewsModels
             }
         }
 
-        public ICollectionView TreeViewCategoriesView { get; }
+        /// <summary>
+        /// Object widoku dla manupulowania elementami na UI
+        /// </summary>
+        private ICollectionView TreeViewCategoriesView { get; set; }
 
+        /// <summary>
+        /// Komenda dodania nowej kategorii 
+        /// </summary>
+        public ICommand AddNewCategoryCommand { get; set; }
         private void OnAddNewCategoryCommandExecuted(object sender)
         {
             Category newCategory = new Category()
@@ -385,8 +506,8 @@ namespace ToDoList.ViewsModels
                 User = AuthenticatedUser
             };
 
-            _DBcontext.Categories.Add(newCategory);
-            _DBcontext.SaveChanges();
+            DBcontext.Categories.Add(newCategory);
+            DBcontext.SaveChanges();
             TreeViewCategories.Add(newCategory);
             NewCategoryTitle = string.Empty;
             OnPropertyChanged();
@@ -401,6 +522,9 @@ namespace ToDoList.ViewsModels
         #region Tasks
 
         private string _newTaskContent;
+        /// <summary>
+        /// Zawartość nowo tworzonego zadania
+        /// </summary>
         public string NewTaskContent
         {
             get
@@ -413,7 +537,12 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
+
         private DateTime? _newTaskDate;
+
+        /// <summary>
+        /// Data nowo tworzonego zadania
+        /// </summary>
         public DateTime? NewTaskDate
         {
             get { return _newTaskDate; }
@@ -423,7 +552,12 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
+
         private string _editedTaskContent;
+
+        /// <summary>
+        /// Nowo wprowadzana zawatrość edytowanego zadania
+        /// </summary>
         public string EditedTaskContent
         {
             get
@@ -436,7 +570,12 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
+
         private Task _selectedTask;
+
+        /// <summary>
+        /// Wybrane zadanie na liście UI
+        /// </summary>
         public Task SelectedTask
         {
             get
@@ -449,17 +588,16 @@ namespace ToDoList.ViewsModels
                 OnPropertyChanged();
             }
         }
-        public ICommand AddNewTaskCommand { get; }
-        private ICommand _changeTaskStatusCommand;
-        public ICommand ChangeTaskStatusCommand
-        {
-            get
-            {
-                if (_changeTaskStatusCommand == null)
-                    _changeTaskStatusCommand = new RelayCommand<object>(selectedItem => OnChangeTaskStatusCommand(selectedItem));
-                return _changeTaskStatusCommand;
-            }
-        }
+
+        /// <summary>
+        /// Widok dla manupulowania zadaniami na UI
+        /// </summary>
+        public ICollectionView SelectedTasksView { get; set; }
+
+        /// <summary>
+        /// Komenda dodania nowego zadania
+        /// </summary>
+        public ICommand AddNewTaskCommand { get; set; }
         private void OnAddNewTaskCommandExecuted(object sender)
         {
             Task newTask = new Task()
@@ -470,8 +608,8 @@ namespace ToDoList.ViewsModels
                 CompleteDate = NewTaskDate
             };
             NewTaskDate = null;
-            _DBcontext.Tasks.Add(newTask);
-            _DBcontext.SaveChanges();
+            DBcontext.Tasks.Add(newTask);
+            DBcontext.SaveChanges();
             SelectedTaskListItems.Add(newTask);
             NewTaskContent = string.Empty;
             OnPropertyChanged();
@@ -480,15 +618,35 @@ namespace ToDoList.ViewsModels
         {
             return string.IsNullOrEmpty(NewTaskContent) || _selectedTasksListId == 2 ? false : true;
         }
+
+        private ICommand _changeTaskStatusCommand;
+
+        /// <summary>
+        /// Komenda zmiany statusu zadania
+        /// </summary>
+        public ICommand ChangeTaskStatusCommand
+        {
+            get
+            {
+                if (_changeTaskStatusCommand == null)
+                    _changeTaskStatusCommand = new RelayCommand<object>(selectedItem => OnChangeTaskStatusCommand(selectedItem));
+                return _changeTaskStatusCommand;
+            }
+        }
+
         private void OnChangeTaskStatusCommand(object sender)
         {
             var selectedTask = (Task)sender;
             selectedTask.IsCompleted = !selectedTask.IsCompleted;
-            _DBcontext.SaveChanges();
+            DBcontext.SaveChanges();
             SelectedTasksView.Refresh();
         }
 
         private ICommand _deleteTaskCommand;
+
+        /// <summary>
+        /// Komenda usuwania zadania
+        /// </summary>
         public ICommand DeleteTaskCommand
         {
             get
@@ -496,8 +654,8 @@ namespace ToDoList.ViewsModels
                 if (_deleteTaskCommand == null)
                     _deleteTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
-                        _DBcontext.Tasks.Remove(SelectedTask);
-                        _DBcontext.SaveChanges();
+                        DBcontext.Tasks.Remove(SelectedTask);
+                        DBcontext.SaveChanges();
                         SelectedTaskListItems.Remove(SelectedTask);
                         SelectedTasksView.Refresh();
                     });
@@ -506,11 +664,14 @@ namespace ToDoList.ViewsModels
         }
 
         private ICommand _renameTaskCommand;
+
+        /// <summary>
+        /// Komenda zmiany zawartości zadania
+        /// </summary>
         public ICommand RenameTaskCommand
         {
             get
             {
-
                 if (_renameTaskCommand == null)
                     _renameTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
@@ -525,7 +686,12 @@ namespace ToDoList.ViewsModels
                 return _renameTaskCommand;
             }
         }
+
         private ICommand _finishRenameTaskCommand;
+
+        /// <summary>
+        /// Komenda akceptująca zmiane zawartości zadania
+        /// </summary>
         public ICommand FinishRenameTaskCommand
         {
             get
@@ -533,20 +699,21 @@ namespace ToDoList.ViewsModels
                 if (_finishRenameTaskCommand == null)
                     _finishRenameTaskCommand = new RelayCommand<Task>(selectedItem =>
                     {
-
                         selectedItem.Content = EditedTaskContent;
                         SelectedTask.IsInEditMode = false;
-
                         SelectedTasksView.Refresh();
-                        _DBcontext.SaveChanges();
+                        DBcontext.SaveChanges();
                         EditedTaskContent = null;
-
-
                     });
                 return _finishRenameTaskCommand;
             }
         }
+
         private bool _showOnlyInProgres;
+
+        /// <summary>
+        /// Property dla bindingu przełącznika 'Show only In progres'
+        /// </summary>
         public bool ShowOnlyInProgres
         {
             get
@@ -565,9 +732,11 @@ namespace ToDoList.ViewsModels
             }
         }
 
-
-
         private string _taskFilterSubString = String.Empty;
+
+        /// <summary>
+        /// Property dla bindingu sub-stringa dla wyszukiwania zadań
+        /// </summary>
         public string TaskFilterSubString
         {
             get { return _taskFilterSubString; }
@@ -581,11 +750,16 @@ namespace ToDoList.ViewsModels
                 }
             }
         }
+
+        /// <summary>
+        /// Medoda filtrująca. Zwraca true jeśli objekt spełnia wymagania
+        /// </summary>
+        /// <param name="obj">Zadanie które będzie filtrowane</param>
+        /// <returns></returns>
         private bool FilterTasks(object obj)
         {
             if (obj is Task task)
-            {
-
+            { 
                 if (!ShowOnlyInProgres)
                 {
                     return task.Content.Contains(TaskFilterSubString, StringComparison.InvariantCultureIgnoreCase);
@@ -600,6 +774,10 @@ namespace ToDoList.ViewsModels
         }
 
         private string _taskListSelectedSorting;
+
+        /// <summary>
+        /// Property dla bindingu na selector sortowania
+        /// </summary>
         public string TaskListSelectedSorting
         {
             get
@@ -622,16 +800,13 @@ namespace ToDoList.ViewsModels
             }
         }
 
-        class SortingConverter
-        {
-            public ListSortDirection SortingDirection { get; set; }
-            public SortDescription SortDescription { get; set; }
-        }
-
+        /// <summary>
+        /// Klasa konwertująca string z widoku na objekt SortDescription
+        /// </summary>
+        /// <param name="sortFromView">String zawierający potrzebne sortowanie</param>
+        /// <returns>Zwraca obiekt SortDescription</returns>
         private SortDescription sortingConverter(string sortFromView)
         {
-            //SortingConverter sortingConverter = new SortingConverter();
-
             if (sortFromView == "System.Windows.Controls.ComboBoxItem: Date ascending")
             {
                 return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending);
@@ -643,63 +818,78 @@ namespace ToDoList.ViewsModels
                 return new SortDescription(nameof(Task.IsCompleted), ListSortDirection.Ascending);
             }
             return new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Ascending);
-
         }
 
-
-        #endregion
-
-
-        public ICommand ShowMyDayTasksCommand { get; }
+        /// <summary>
+        /// Komenda pobierania zadań z dzisiajszą datą
+        /// </summary>
+        public ICommand ShowMyDayTasksCommand { get; set; }
 
         private void OnShowMyDayTasksCommandExecuted(object sender)
         {
             _selectedTasksListId = 2;
             SelectedTaskListItems.Clear();
-            var load = _DBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList();
+            var load = DBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList();
 
             foreach (var task in load)
             {
                 SelectedTaskListItems.Add(task);
             }
+
             SelectedTasksView.Refresh();
             OnPropertyChanged();
         }
+        #endregion
 
-        public MainViewModel(ToDoListDBContext dBcontext)
+        /// <summary>
+        /// Konstruktor
+        /// </summary>
+        /// <param name="dBcontext">Kontekst bazy danych, przekazywany kontenerem DI</param>
+        public MainViewModel(ToDoListDBContext dBcontext, AboutWindow aboutWindow)
         {
-            _DBcontext = dBcontext;
-            dBcontext.Database.Migrate();
+            DBcontext = dBcontext;
+            
+            AboutWindow = aboutWindow;
 
-            _defaultCategory = dBcontext.Categories.First(c => c.Id == 1);
-            AuthenticatedUser = dBcontext.Users.First<User>(u => u.IsAuthenticated == true);
+            init();
+        }
 
-            UserSettings = dBcontext.UserSettings.First<UserSettings>(us => us.User == AuthenticatedUser);
+        /// <summary>
+        /// Medoda inicjalizująca stan aplikacji przy urachamianiu
+        /// </summary>
+        private void init()
+        {
+            DBcontext.Database.Migrate();
+
+            _defaultCategory = DBcontext.Categories.First(c => c.Id == 1);
+            AuthenticatedUser = DBcontext.Users.First<User>(u => u.IsAuthenticated == true);
+
+            // Pobieranie ustawień aplikacji
+            UserSettings = DBcontext.UserSettings.First<UserSettings>(us => us.User == AuthenticatedUser);
             IsDarkModeEnabled = UserSettings.DarkMode;
-            WindowWidth = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
-            WindowHeight = _DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowHeight;
-            SpliterPosition = new GridLength(_DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).GridSplitterPosition);
+            WindowWidth = DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowWidth;
+            WindowHeight = DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).WindowHeight;
+            SpliterPosition = new GridLength(DBcontext.UserSettings.First(u => u.UserId == AuthenticatedUser.Id).GridSplitterPosition);
 
+            // Ładowanie listy zadań, dana zakończenia których jest dzisiaj
             _selectedTasksListId = 2;
-            SelectedTaskListItems = new ObservableCollection<Task>(dBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList());
+            SelectedTaskListItems = new ObservableCollection<Task>(DBcontext.Tasks.Where(t => t.CompleteDate == DateTime.Today).ToList());
 
-            TreeViewCategories = new ObservableCollection<Category>(dBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == AuthenticatedUser.Id).ToList());
+            //Pobieranie danych dla TreeView
+            TreeViewCategories = new ObservableCollection<Category>(DBcontext.Categories.Include(c => c.TaskLists).Where(c => c.UserId == AuthenticatedUser.Id).ToList());
+
+            // Inicjalizowanie komend
             AddNewCategoryCommand = new LambdaCommand(OnAddNewCategoryCommandExecuted, CanAddNewCategoryCommandExecute);
             AddNewTaskListCommand = new LambdaCommand(OnAddNewTaskListCommandExecuted, CanAddNewTaskListCommandExecute);
             AddNewTaskCommand = new LambdaCommand(OnAddNewTaskCommandExecuted, CanAddNewTaskCommandExecute);
             ShowMyDayTasksCommand = new LambdaCommand(OnShowMyDayTasksCommandExecuted);
 
-
-
-
+            // Pobieranie widoku dla mapulowania elementami na UI
+            TreeViewCategoriesView = CollectionViewSource.GetDefaultView(TreeViewCategories);
             SelectedTasksView = CollectionViewSource.GetDefaultView(SelectedTaskListItems);
             SelectedTasksView.Filter = FilterTasks;
             SelectedTasksView.SortDescriptions.Add(new SortDescription(nameof(Task.CompleteDate), ListSortDirection.Descending));
-            TreeViewCategoriesView = CollectionViewSource.GetDefaultView(TreeViewCategories);
-
 
         }
-
-
     }
 }

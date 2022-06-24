@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
+/// Migracje bazy danych
 namespace ToDoList.Migrations
 {
+    /// <summary>
+    /// Migracja inicjalizująca bazę danych
+    /// </summary>
     public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
