@@ -13,15 +13,47 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         WindowStartupLocation="CenterScreen"
-        Title="About" 
-        Height="450" 
+        Title="About"
+        Height="450"
         Width="500"
-        MinWidth="450"
-        MinHeight="500">
+        ResizeMode="NoResize">
     <Grid>
-        
+
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="24"
+               Margin="129,74,0,0">Author:</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="20"
+               Margin="230,76,0,0">Artur Babii</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="24"
+               Margin="43,116,0,0">Numer albumu:</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="20"
+               Margin="230,118,0,0">w51816</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="24"
+               Margin="91,158,0,0">Przedmiot:</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="20"
+               Margin="230,160,0,0">Szkolenie techniczne 1</Label>
         <Label HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               FontSize="24">Artur Babii</Label>
+               VerticalAlignment="Top"
+               FontSize="20"
+               Margin="0,313,0,0">Aplikacja do zarządzania zadaniami</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="19"
+               Margin="138,350,0,0">Version:</Label>
+        <Label HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               FontSize="19"
+               Margin="230,350,0,0">v1.10.0</Label>
     </Grid>
 </Window>
